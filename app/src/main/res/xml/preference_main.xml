@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="当耳机插入时">
+        <SwitchPreference
+            android:icon="@drawable/ic_baseline_brightness_7_24"
+            android:key="@string/lightScreen"
+            android:summary="我发光了！"
+            android:title="点亮屏幕" />
+        <SwitchPreference
+            android:icon="@drawable/ic_baseline_open_in_new_24"
+            android:key="@string/openPlayer"
+            android:summary="不用手动打开的哦"
+            android:title="打开播放器" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="其它">
+        <Preference
+            android:icon="@drawable/ic_baseline_track_changes_24"
+            android:key="@string/channelTest"
+            android:summary="会播放一些音频"
+            android:title="测试左右声道" />
+    </PreferenceCategory>
+</PreferenceScreen>

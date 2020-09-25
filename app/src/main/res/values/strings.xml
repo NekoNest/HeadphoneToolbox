@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">耳机工具箱</string>
+    <string name="lightScreen">light_screen</string>
+    <string name="openPlayer">open_player</string>
+    <string name="channelTest">channel_test</string>
+
+    <string name="playerSettings">player_settings</string>
+    <string name="selectPlayer">select_player</string>
+    <string name="alertOnOpen">alert_on_open</string>
+
+    <string name="allowBluetooth">allow_bluetooth</string>
+    <string name="openDetails">open_details</string>
+    <string name="viewLog">view_log</string>
+    <string name="openInCoolapk">open_in_coolapk</string>
+    <string name="about">about</string>
+    <string name="backgroundMethod">background_method</string>
+    <string name="customNotify">custom_notify</string>
+    <string name="allowParallel">allow_parallel</string>
+
+    <string-array name="backgroundMethods">
+        <item>显示常驻通知(>=安卓8.0推荐)</item>
+        <item>忽略省电优化</item>
+    </string-array>
+</resources>
