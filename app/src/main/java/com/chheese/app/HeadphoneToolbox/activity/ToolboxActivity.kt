@@ -18,7 +18,8 @@ import com.chheese.app.HeadphoneToolbox.fragment.AbstractPreferenceFragment
 import com.chheese.app.HeadphoneToolbox.fragment.MainFragment
 import com.chheese.app.HeadphoneToolbox.fragment.SettingsFragment
 import com.chheese.app.HeadphoneToolbox.get
-import kotlinx.android.synthetic.main.activity_toolbox.*
+import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class ToolboxActivity : NoActionBarActivity() {
     private val mainFragment = MainFragment()
@@ -29,6 +30,9 @@ class ToolboxActivity : NoActionBarActivity() {
 
     private var mediaPlayer: MediaPlayer? = null
 
+    private lateinit var mainNav: BottomNavigationView
+    private lateinit var mainToolbar: MaterialToolbar
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -36,7 +40,9 @@ class ToolboxActivity : NoActionBarActivity() {
         handler = Handler(looper) {
             when (it.what) {
                 FLAG_GO_SETTINGS -> {
-                    nav_main.selectedItemId = R.id.settings
+                    if (this::mainNav.isInitialized) {
+                        mainNav.selectedItemId = R.id.settings
+                    }
                     true
                 }
                 FLAG_PLAY_AUDIO -> {
@@ -50,10 +56,14 @@ class ToolboxActivity : NoActionBarActivity() {
         app = application as HeadphoneToolbox
 
         setContentView(R.layout.activity_toolbox)
-        setSupportActionBar(toolbar_main)
+
+        mainNav = findViewById(R.id.nav_main)
+        mainToolbar = findViewById(R.id.toolbar_main)
+
+        setSupportActionBar(mainToolbar)
         supportActionBar!!.title = ""
         switchFragment(mainFragment)
-        nav_main.setOnNavigationItemSelectedListener {
+        mainNav.setOnNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.main -> {
                     switchFragment(mainFragment)

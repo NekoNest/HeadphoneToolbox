@@ -5,11 +5,12 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.widget.ListView
 import android.widget.SimpleAdapter
 import android.widget.Toast
 import com.chheese.app.HeadphoneToolbox.HeadphoneToolbox
 import com.chheese.app.HeadphoneToolbox.R
-import kotlinx.android.synthetic.main.activity_all_logs.*
+import com.google.android.material.appbar.MaterialToolbar
 import java.io.File
 
 class LogListActivity : NoActionBarActivity() {
@@ -20,10 +21,13 @@ class LogListActivity : NoActionBarActivity() {
 
         setContentView(R.layout.activity_all_logs)
 
+        val toolbar = findViewById<MaterialToolbar>(R.id.toolbar_logs)
+        val logList = findViewById<ListView>(R.id.list_logs)
+
         app = application as HeadphoneToolbox
         app.logger.info("有人来看log了")
 
-        setSupportActionBar(toolbar_logs)
+        setSupportActionBar(toolbar)
         supportActionBar?.apply {
             setHomeButtonEnabled(true)
             setDisplayHomeAsUpEnabled(true)
@@ -41,13 +45,13 @@ class LogListActivity : NoActionBarActivity() {
         app.logger.info("log扫描完成")
 
         if (fileNames.isNotEmpty()) {
-            list_logs.adapter = SimpleAdapter(
+            logList.adapter = SimpleAdapter(
                 this,
                 fileNames,
                 android.R.layout.simple_list_item_1, arrayOf("fileName"),
                 intArrayOf(android.R.id.text1)
             )
-            list_logs.setOnItemClickListener { _, _, position, _ ->
+            logList.setOnItemClickListener { _, _, position, _ ->
                 val fileName = fileNames[position]["fileName"]
                 val intent = Intent(this, ViewLogActivity::class.java)
                 intent.putExtra("filePath", filesDir.absolutePath + File.separator + fileName)

@@ -18,34 +18,34 @@ import com.chheese.app.HeadphoneToolbox.get
 import com.google.android.material.textfield.TextInputEditText
 
 class SettingsFragment : AbstractPreferenceFragment(R.xml.preference_settings) {
-    @BindKey(R.string.backgroundMethod)
+    @BindKey("background_method")
     private lateinit var backgroundMethod: Preference
 
-    @BindKey(R.string.customNotify)
+    @BindKey("custom_notify")
     private lateinit var customNotify: Preference
 
-    @BindKey(R.string.playerSettings)
+    @BindKey("player_settings")
     private lateinit var playerSettings: PreferenceCategory
 
-    @BindKey(R.string.alertOnOpen)
+    @BindKey("alert_on_open")
     private lateinit var alertBeforeOpen: SwitchPreference
 
-    @BindKey(R.string.selectPlayer)
+    @BindKey("select_player")
     private lateinit var selectPlayer: Preference
 
-    @BindKey(R.string.viewLog)
+    @BindKey("view_log")
     private lateinit var viewLog: Preference
 
-    @BindKey(R.string.openDetails)
+    @BindKey("open_details")
     private lateinit var openDetails: Preference
 
-    @BindKey(R.string.openInCoolapk)
+    @BindKey("open_in_coolapk")
     private lateinit var openCoolapk: Preference
 
-    @BindKey(R.string.about)
+    @BindKey("about")
     private lateinit var about: Preference
 
-    @BindKey(R.string.allowParallel)
+    @BindKey("allow_pararell")
     private lateinit var allowParallel: SwitchPreference
 
     init {

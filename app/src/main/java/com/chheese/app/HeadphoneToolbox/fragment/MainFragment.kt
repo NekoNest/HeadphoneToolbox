@@ -18,13 +18,13 @@ class MainFragment : AbstractPreferenceFragment(R.xml.preference_main) {
     private var leftAudioMap: Map<Int, Int>? = null
     private var rightAudioMap: Map<Int, Int>? = null
 
-    @BindKey(R.string.lightScreen)
+    @BindKey("light_screen")
     private lateinit var lightScreen: SwitchPreference
 
-    @BindKey(R.string.openPlayer)
+    @BindKey("open_player")
     private lateinit var openPlayer: SwitchPreference
 
-    @BindKey(R.string.channelTest)
+    @BindKey("channel_test")
     private lateinit var channelTest: Preference
 
     override fun init() {

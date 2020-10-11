@@ -38,7 +38,7 @@ abstract class AbstractPreferenceFragment(@XmlRes private val resId: Int) :
         addPreferencesFromResource(resId)
         app.logger.info("开始获取Fragment内所有Preference")
         val clazz = this.javaClass
-        val fieldKeyMap = HashMap<Field, Int>()
+        val fieldKeyMap = HashMap<Field, String>()
         val fields = clazz.declaredFields.filter {
             val annotation = it.getAnnotation(BindKey::class.java)
             if (annotation != null) {
@@ -51,7 +51,7 @@ abstract class AbstractPreferenceFragment(@XmlRes private val resId: Int) :
         fields.forEach {
             val fieldClazz = it.type
             it.isAccessible = true
-            val key = resources.getString(fieldKeyMap[it]!!)
+            val key = fieldKeyMap[it]!!
             it.set(this, fieldClazz.cast(findPreference(key)))
             app.logger.info("key: $key ,fieldName: ${it.name} 赋值完成")
         }
@@ -106,7 +106,7 @@ abstract class AbstractPreferenceFragment(@XmlRes private val resId: Int) :
     protected abstract fun onIgnoreBatteryOptimizationActivity(accept: Boolean)
 
     @Target(AnnotationTarget.FIELD)
-    annotation class BindKey(@StringRes val key: Int)
+    annotation class BindKey(@StringRes val key: String)
 
     companion object {
         const val FLAG_FRAGMENT_SHOWN = 0xf002

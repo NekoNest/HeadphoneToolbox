@@ -3,7 +3,8 @@ package com.chheese.app.HeadphoneToolbox.activity
 import android.os.Bundle
 import android.view.MenuItem
 import com.chheese.app.HeadphoneToolbox.R
-import kotlinx.android.synthetic.main.activity_log.*
+import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.textview.MaterialTextView
 import java.io.File
 
 class ViewLogActivity : NoActionBarActivity() {
@@ -12,8 +13,12 @@ class ViewLogActivity : NoActionBarActivity() {
         setContentView(R.layout.activity_log)
         val filePath = intent.getStringExtra("filePath") ?: return
         val file = File(filePath)
-        text_log.text = file.readText()
-        setSupportActionBar(toolbar_log)
+
+        val logText = findViewById<MaterialTextView>(R.id.text_log)
+        val logToolbar = findViewById<MaterialToolbar>(R.id.toolbar_log)
+
+        logText.text = file.readText()
+        setSupportActionBar(logToolbar)
         supportActionBar?.apply {
             setHomeButtonEnabled(true)
             setDisplayHomeAsUpEnabled(true)
