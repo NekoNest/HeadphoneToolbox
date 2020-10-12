@@ -25,7 +25,6 @@ class ToolboxActivity : NoActionBarActivity() {
     private val mainFragment = MainFragment()
     private val settingsFragment = SettingsFragment()
     private var currentFragment: AbstractPreferenceFragment? = null
-    private lateinit var app: HeadphoneToolbox
     lateinit var handler: Handler
 
     private var mediaPlayer: MediaPlayer? = null

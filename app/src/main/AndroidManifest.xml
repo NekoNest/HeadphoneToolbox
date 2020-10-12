@@ -22,19 +22,26 @@
         <activity
             android:name=".activity.ToolboxActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/AppTheme"
+            tools:ignore="LockedOrientationActivity" />
+
         <activity
             android:name=".activity.LogListActivity"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".activity.ViewLogActivity"
             android:theme="@style/AppTheme" />
-        <activity android:name=".activity.ToolboxActivityCompose" />
+
+        <activity
+            android:name=".activity.SplashActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            tools:ignore="LockedOrientationActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <service android:name=".ToolboxService" />
 

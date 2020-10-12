@@ -45,8 +45,14 @@ class SettingsFragment : AbstractPreferenceFragment(R.xml.preference_settings) {
     @BindKey("about")
     private lateinit var about: Preference
 
-    @BindKey("allow_pararell")
+    @BindKey("allow_parallel")
     private lateinit var allowParallel: SwitchPreference
+
+    @BindKey("enable_experimental_feature")
+    private lateinit var enableExperimentalFeature: SwitchPreference
+
+    @BindKey("about_author")
+    private lateinit var aboutAuthor: Preference
 
     init {
         messageCallback = {
@@ -134,17 +140,52 @@ class SettingsFragment : AbstractPreferenceFragment(R.xml.preference_settings) {
             }
             true
         }
+
+        enableExperimentalFeature.setOnPreferenceClickListener {
+            if (enableExperimentalFeature.isChecked) {
+                AlertDialog.Builder(requireActivity())
+                    .setTitle("二次确认")
+                    .setMessage("实验版特性一般处于开发阶段，可能存在大量bug，甚至导致应用崩溃，是否继续开启？")
+                    .setPositiveButton("我爱做实验！") { _, _ -> }
+                    .setNegativeButton("拜拜了您嘞") { _, _ ->
+                        enableExperimentalFeature.isChecked = false
+                    }.create().show()
+            }
+            true
+        }
+
+        aboutAuthor.setOnPreferenceClickListener(this::onAboutAuthorClick)
     }
 
     private fun onAboutClick(pref: Preference): Boolean {
         AlertDialog.Builder(requireActivity())
-            .setTitle("关于")
+            .setTitle("关于此应用")
             .setMessage(
                 """
-                作者：
-                LemonNeko柠喵
                 感谢：
                 可爱的酷友们 和 LiliumNeko百合喵""".trimIndent()
+            )
+            .setPositiveButton("知道啦") { _, _ -> }
+            .setNegativeButton("去Star一下") { _, _ ->
+                val uri = Uri.parse("https://github.com/NekoNest/HeadphoneToolbox")
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.data = uri
+                startActivity(intent)
+            }
+            .create().show()
+        return true
+    }
+
+    private fun onAboutAuthorClick(pref: Preference): Boolean {
+        AlertDialog.Builder(requireActivity())
+            .setTitle("关于柠喵")
+            .setMessage(
+                """
+                    柠喵是一只跨性别猫猫
+                    喜欢敲代码、玩游戏
+                    是个画渣但是不会停止画画
+                    喜欢百合喵！（百合喵超厉害！）
+                """.trimIndent()
             )
             .setPositiveButton("知道啦") { _, _ -> }
             .setNegativeButton("请柠喵喝可乐") { _, _ ->

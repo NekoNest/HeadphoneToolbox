@@ -13,9 +13,12 @@
     <string name="viewLog">view_log</string>
     <string name="openInCoolapk">open_in_coolapk</string>
     <string name="about">about</string>
+    <string name="about_author">about_author</string>
     <string name="backgroundMethod">background_method</string>
     <string name="customNotify">custom_notify</string>
     <string name="allowParallel">allow_parallel</string>
+    <string name="experimental_feature_enabled">预览版特性已启用</string>
+    <string name="enableExperimentalFeature">enable_experimental_feature</string>
 
     <string-array name="backgroundMethods">
         <item>显示常驻通知(>=安卓8.0推荐)</item>

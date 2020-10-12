@@ -33,25 +33,40 @@
             android:title="自定义后台通知信息"
             app:isPreferenceVisible="false" />
         <SwitchPreference
+            android:icon="@drawable/ic_repeat"
             android:key="@string/allowParallel"
             android:summary="可能导致内存泄漏"
             android:title="声道测试允许鬼畜播放" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="开发者选项">
+        <SwitchPreference
+            android:icon="@drawable/ic_test_tube_24"
+            android:key="@string/enableExperimentalFeature"
+            android:summary="这并不稳定，遇到bug请及时反馈"
+            android:title="启用预览版特性" />
         <Preference
             android:key="@string/openDetails"
             android:summary="此处为开发者选项"
             android:title="在设置中查看应用详情" />
         <Preference
+            android:icon="@drawable/ic_math_log"
             android:key="@string/viewLog"
             android:summary="此处为开发者选项"
             android:title="查看日志" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="关于">
         <Preference
             android:key="@string/openInCoolapk"
             android:summary="可以给柠喵提建议什么的"
             android:title="在酷安中查看详情" />
         <Preference
-            android:icon="@drawable/ic_baseline_sentiment_very_satisfied_24"
             android:key="@string/about"
-            android:summary="版本号：4.0.1_ice_cream"
-            android:title="关于" />
+            android:summary="版本号：4.0.2_milk_tea"
+            android:title="关于耳机工具箱" />
+        <Preference
+            android:icon="@drawable/ic_cat"
+            android:key="@string/about_author"
+            android:summary="一只吃柠檬糖的猫猫"
+            android:title="关于柠喵" />
     </PreferenceCategory>
 </PreferenceScreen>

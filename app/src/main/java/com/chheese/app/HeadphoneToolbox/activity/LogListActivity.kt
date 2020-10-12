@@ -14,8 +14,6 @@ import com.google.android.material.appbar.MaterialToolbar
 import java.io.File
 
 class LogListActivity : NoActionBarActivity() {
-    private lateinit var app: HeadphoneToolbox
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
