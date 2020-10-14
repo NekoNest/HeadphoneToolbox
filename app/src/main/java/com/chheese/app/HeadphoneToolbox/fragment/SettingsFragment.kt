@@ -229,11 +229,16 @@ class SettingsFragment : AbstractPreferenceFragment(R.xml.preference_settings) {
         labels.add("不选择")
 
         pm.getInstalledApplications(0).filter {
-            val label = it.loadLabel(pm)
-            val packageName = it.packageName
-            label.contains("music", true)
-                    || label.contains("音乐")
-                    || packageName.contains("music", true)
+            if (app.sharedPreferences.get(res, R.string.showAllApps, false)) {
+                pm.getLaunchIntentForPackage(it.packageName) != null
+            } else {
+                val label = it.loadLabel(pm)
+                val packageName = it.packageName
+                (label.contains("music", true)
+                        || label.contains("音乐")
+                        || packageName.contains("music", true))
+                        && pm.getLaunchIntentForPackage(it.packageName) != null
+            }
         }.forEach {
             val label = it.loadLabel(pm).toString()
             labels.add(label)

@@ -19,6 +19,7 @@
     <string name="allowParallel">allow_parallel</string>
     <string name="experimental_feature_enabled">预览版特性已启用</string>
     <string name="enableExperimentalFeature">enable_experimental_feature</string>
+    <string name="showAllApps">show_all_apps</string>
 
     <string-array name="backgroundMethods">
         <item>显示常驻通知(>=安卓8.0推荐)</item>

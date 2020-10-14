@@ -10,6 +10,11 @@
             android:summary="没有选择要打开的播放器"
             android:title="选择要打开的播放器" />
         <SwitchPreference
+            android:icon="@drawable/ic_expand_all"
+            android:key="show_all_apps"
+            android:summary="如果在列表中找不到需要的APP"
+            android:title="显示所有APP" />
+        <SwitchPreference
             android:icon="@drawable/ic_outline_info_24"
             android:key="@string/alertOnOpen"
             android:summary="当你要插耳机看视频时可启用"
