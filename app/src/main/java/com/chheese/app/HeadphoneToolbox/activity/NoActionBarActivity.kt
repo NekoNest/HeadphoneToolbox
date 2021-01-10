@@ -12,8 +12,8 @@ open class NoActionBarActivity : AppCompatActivity() {
         app = application as HeadphoneToolbox
         immersionBar {
             transparentStatusBar()
-            transparentNavigationBar()
-            autoNavigationBarDarkModeEnable(true)
+            navigationBarColor(android.R.color.white)
+            navigationBarDarkIcon(true)
             statusBarDarkFont(true)
             fitsSystemWindows(true)
         }

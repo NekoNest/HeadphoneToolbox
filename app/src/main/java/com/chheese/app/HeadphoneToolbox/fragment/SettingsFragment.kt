@@ -104,6 +104,10 @@ class SettingsFragment : AbstractPreferenceFragment(R.xml.preference_settings) {
         }
 
         about.setOnPreferenceClickListener(this::onAboutClick)
+        val versionName =
+            requireActivity().packageManager.getPackageInfo(app.packageName, 0).versionName
+        about.summary = "版本：$versionName"
+
         openDetails.setOnPreferenceClickListener {
             val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
             intent.data = Uri.fromParts("package", app.packageName, null)
@@ -162,11 +166,12 @@ class SettingsFragment : AbstractPreferenceFragment(R.xml.preference_settings) {
             .setTitle("关于此应用")
             .setMessage(
                 """
-                感谢：
-                可爱的酷友们 和 LiliumNeko百合喵""".trimIndent()
+                耳机工具箱是一个耳机相关工具的集合
+                意见反馈可加入QQ群
+                官方QQ群：594824871""".trimIndent()
             )
             .setPositiveButton("知道啦") { _, _ -> }
-            .setNegativeButton("去Star一下") { _, _ ->
+            .setNegativeButton("查看Github仓库") { _, _ ->
                 val uri = Uri.parse("https://github.com/NekoNest/HeadphoneToolbox")
                 val intent = Intent(Intent.ACTION_VIEW)
                 intent.data = uri
@@ -179,21 +184,9 @@ class SettingsFragment : AbstractPreferenceFragment(R.xml.preference_settings) {
     private fun onAboutAuthorClick(pref: Preference): Boolean {
         AlertDialog.Builder(requireActivity())
             .setTitle("关于柠喵")
-            .setMessage(
-                """
-                    柠喵是一只跨性别猫猫
-                    喜欢敲代码、玩游戏
-                    是个画渣但是不会停止画画
-                    喜欢百合喵！（百合喵超厉害！）
-                """.trimIndent()
-            )
+            .setMessage("柠喵是一只跨性别猫猫，一名贫穷的独立开发者，参与ArcLight开发，主导耳机工具箱开发，如果想支持猫猫可以到独立广告屏里点一下广告")
             .setPositiveButton("知道啦") { _, _ -> }
-            .setNegativeButton("请柠喵喝可乐") { _, _ ->
-                val uri = Uri.parse("https://afdian.net/@TAGP0")
-                val intent = Intent(Intent.ACTION_VIEW)
-                intent.data = uri
-                startActivity(intent)
-            }.setNeutralButton("去柠喵的B站空间") { _, _ ->
+            .setNeutralButton("去柠喵的B站空间") { _, _ ->
                 val uri = Uri.parse("https://space.bilibili.com/5325421")
                 val intent = Intent(Intent.ACTION_VIEW)
                 intent.data = uri

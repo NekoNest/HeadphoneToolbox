@@ -60,9 +60,14 @@
             android:title="查看日志" />
     </PreferenceCategory>
     <PreferenceCategory android:title="关于">
+        <SwitchPreference
+            android:key="@string/disableFreeAppDialog"
+            android:summaryOff="如果您觉得很烦人的话请关闭"
+            android:summaryOn="现在您不会在启动时看到提示"
+            android:title="关闭启动时的免费软件提示" />
         <Preference
             android:key="@string/openInCoolapk"
-            android:summary="可以给柠喵提建议什么的"
+            android:summary="查看他人对于耳机工具箱的评论"
             android:title="在酷安中查看详情" />
         <Preference
             android:key="@string/about"
