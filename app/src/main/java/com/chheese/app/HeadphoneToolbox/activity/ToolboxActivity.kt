@@ -17,7 +17,8 @@ import com.chheese.app.HeadphoneToolbox.ToolboxService
 import com.chheese.app.HeadphoneToolbox.fragment.AbstractPreferenceFragment
 import com.chheese.app.HeadphoneToolbox.fragment.MainFragment
 import com.chheese.app.HeadphoneToolbox.fragment.SettingsFragment
-import com.chheese.app.HeadphoneToolbox.get
+import com.chheese.app.HeadphoneToolbox.util.get
+import com.chheese.app.HeadphoneToolbox.util.logger
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -77,7 +78,7 @@ class ToolboxActivity : NoActionBarActivity() {
         }
 
         if (app.sharedPreferences.get(resources, R.string.openDetails, false)) {
-            app.logger.info("打开设置中的应用详情页")
+            logger.info("打开设置中的应用详情页")
             val intent = Intent()
                 .setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                 .setData(Uri.fromParts("package", packageName, null))
@@ -89,23 +90,23 @@ class ToolboxActivity : NoActionBarActivity() {
 
     private fun playMedia(@RawRes id: Int) {
         if (app.sharedPreferences.get(resources, R.string.allowParallel, false)) {
-            app.logger.info("创建播放器实例，资源ID：$id")
+            logger.info("创建播放器实例，资源ID：$id")
             var mp: MediaPlayer? = MediaPlayer.create(this, id)
             mp!!.start()
             mp.setOnCompletionListener {
                 mp!!.release()
                 mp = null
-                app.logger.info("播放结束，已释放")
+                logger.info("播放结束，已释放")
             }
         } else {
             if (mediaPlayer == null) {
-                app.logger.info("创建播放器实例，资源ID：$id")
+                logger.info("创建播放器实例，资源ID：$id")
                 mediaPlayer = MediaPlayer.create(this, id)
                 mediaPlayer!!.start()
                 mediaPlayer!!.setOnCompletionListener {
                     mediaPlayer!!.release()
                     mediaPlayer = null
-                    app.logger.info("播放结束，已释放")
+                    logger.info("播放结束，已释放")
                 }
             } else {
                 if (mediaPlayer!!.isPlaying) {

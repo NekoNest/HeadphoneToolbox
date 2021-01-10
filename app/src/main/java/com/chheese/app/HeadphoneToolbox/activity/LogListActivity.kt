@@ -10,6 +10,7 @@ import android.widget.SimpleAdapter
 import android.widget.Toast
 import com.chheese.app.HeadphoneToolbox.HeadphoneToolbox
 import com.chheese.app.HeadphoneToolbox.R
+import com.chheese.app.HeadphoneToolbox.util.logger
 import com.google.android.material.appbar.MaterialToolbar
 import java.io.File
 
@@ -23,7 +24,7 @@ class LogListActivity : NoActionBarActivity() {
         val logList = findViewById<ListView>(R.id.list_logs)
 
         app = application as HeadphoneToolbox
-        app.logger.info("有人来看log了")
+        logger.info("有人来看log了")
 
         setSupportActionBar(toolbar)
         supportActionBar?.apply {
@@ -40,7 +41,7 @@ class LogListActivity : NoActionBarActivity() {
             fileNames.add(mapOf("fileName" to it.name))
         }
 
-        app.logger.info("log扫描完成")
+        logger.info("log扫描完成")
 
         if (fileNames.isNotEmpty()) {
             logList.adapter = SimpleAdapter(

@@ -23,7 +23,7 @@
             android:name=".activity.ToolboxActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
-            tools:ignore="LockedOrientationActivity"></activity>
+            tools:ignore="LockedOrientationActivity" />
 
         <activity
             android:name=".activity.LogListActivity"

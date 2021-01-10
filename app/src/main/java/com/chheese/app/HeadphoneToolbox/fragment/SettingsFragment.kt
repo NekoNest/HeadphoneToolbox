@@ -13,8 +13,8 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.SwitchPreference
 import com.chheese.app.HeadphoneToolbox.R
 import com.chheese.app.HeadphoneToolbox.activity.LogListActivity
-import com.chheese.app.HeadphoneToolbox.edit
-import com.chheese.app.HeadphoneToolbox.get
+import com.chheese.app.HeadphoneToolbox.util.edit
+import com.chheese.app.HeadphoneToolbox.util.get
 import com.google.android.material.textfield.TextInputEditText
 
 class SettingsFragment : AbstractPreferenceFragment(R.xml.preference_settings) {

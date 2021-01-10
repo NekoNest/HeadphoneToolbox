@@ -10,21 +10,10 @@ android {
         applicationId "com.chheese.app.HeadphoneToolbox"
         minSdkVersion 23
         targetSdkVersion 30
-        versionCode 20
-        versionName "4.0.2_milk_tea"
+        versionCode 21
+        versionName "4.0.3_milk_tea"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
     }
 }
 
@@ -35,8 +24,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.preference:preference-ktx:1.1.1'
     implementation "com.google.android.material:material:1.2.1"
-    implementation "moe.lemonneko:neko-logger-common:2.0.53-SNAPSHOT"
-    implementation "moe.lemonneko:neko-logger-ktx:2.0.46-SNAPSHOT"
     implementation 'com.gyf.immersionbar:immersionbar:3.0.0'
     implementation 'com.gyf.immersionbar:immersionbar-ktx:3.0.0'
 }

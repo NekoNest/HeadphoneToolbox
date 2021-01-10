@@ -15,6 +15,7 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import com.chheese.app.HeadphoneToolbox.HeadphoneToolbox
 import com.chheese.app.HeadphoneToolbox.activity.ToolboxActivity
+import com.chheese.app.HeadphoneToolbox.util.*
 import java.lang.reflect.Field
 
 abstract class AbstractPreferenceFragment(@XmlRes private val resId: Int) :
@@ -36,7 +37,7 @@ abstract class AbstractPreferenceFragment(@XmlRes private val resId: Int) :
         res = requireActivity().resources
 
         addPreferencesFromResource(resId)
-        app.logger.info("开始获取Fragment内所有Preference")
+        logger.info("开始获取Fragment内所有Preference")
         val clazz = this.javaClass
         val fieldKeyMap = HashMap<Field, String>()
         val fields = clazz.declaredFields.filter {
@@ -53,9 +54,9 @@ abstract class AbstractPreferenceFragment(@XmlRes private val resId: Int) :
             it.isAccessible = true
             val key = fieldKeyMap[it]!!
             it.set(this, fieldClazz.cast(findPreference(key)))
-            app.logger.info("key: $key ,fieldName: ${it.name} 赋值完成")
+            logger.info("key: $key ,fieldName: ${it.name} 赋值完成")
         }
-        app.logger.info("所有Preference都已经赋值完成")
+        logger.info("所有Preference都已经赋值完成")
         init()
     }
 
@@ -92,11 +93,11 @@ abstract class AbstractPreferenceFragment(@XmlRes private val resId: Int) :
         if (requestCode == SettingsFragment.FLAG_IGNORE_BATTERY_OPTIMIZATIONS) {
             when (resultCode) {
                 0 -> {
-                    app.logger.info("用户拒绝了请求")
+                    logger.info("用户拒绝了请求")
                     onIgnoreBatteryOptimizationActivity(true)
                 }
                 -1 -> {
-                    app.logger.info("用户同意了请求")
+                    logger.info("用户同意了请求")
                     onIgnoreBatteryOptimizationActivity(false)
                 }
             }

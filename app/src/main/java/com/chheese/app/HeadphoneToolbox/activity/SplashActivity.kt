@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import com.chheese.app.HeadphoneToolbox.R
-import com.chheese.app.HeadphoneToolbox.get
+import com.chheese.app.HeadphoneToolbox.util.get
 import com.google.android.material.textview.MaterialTextView
 
 class SplashActivity : NoActionBarActivity() {

@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.chheese.app.HeadphoneToolbox.activity.ToolboxActivity
+import com.chheese.app.HeadphoneToolbox.util.get
 
 class ToolboxService : Service() {
     private lateinit var app: HeadphoneToolbox

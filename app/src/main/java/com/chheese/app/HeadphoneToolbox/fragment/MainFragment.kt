@@ -9,8 +9,9 @@ import androidx.preference.Preference
 import androidx.preference.SwitchPreference
 import com.chheese.app.HeadphoneToolbox.R
 import com.chheese.app.HeadphoneToolbox.activity.ToolboxActivity
-import com.chheese.app.HeadphoneToolbox.get
-import com.chheese.app.HeadphoneToolbox.newMessage
+import com.chheese.app.HeadphoneToolbox.util.get
+import com.chheese.app.HeadphoneToolbox.util.logger
+import com.chheese.app.HeadphoneToolbox.util.newMessage
 import com.google.android.material.button.MaterialButton
 import kotlin.random.Random
 
@@ -90,7 +91,7 @@ class MainFragment : AbstractPreferenceFragment(R.xml.preference_main) {
             res.getString(R.string.openPlayer) -> "打开播放器"
             else -> ""
         }
-        app.logger.info("${switchName}开关状态被改变，新状态：$value")
+        logger.info("${switchName}开关状态被改变，新状态：$value")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val backgroundMethod =
                 app.sharedPreferences.get(app.resources, R.string.backgroundMethod, "")

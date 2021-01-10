@@ -11,15 +11,17 @@ import android.os.PowerManager
 import android.view.WindowManager
 import android.widget.Toast
 
+import com.chheese.app.HeadphoneToolbox.util.*
+
 class ToolboxBroadcastReceiver(private val app: HeadphoneToolbox) : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         context ?: return
         val extra = intent?.extras ?: return
         val state = extra.getInt("state", -1)
         if (state == 0) {
-            app.logger.info("耳机已拔出")
+            logger.info("耳机已拔出")
         } else if (state == 1) {
-            app.logger.info("耳机已插入")
+            logger.info("耳机已插入")
             if (app.sharedPreferences.get(context.resources, R.string.lightScreen, false)) {
                 requireWakelock(context)
             }
@@ -44,7 +46,7 @@ class ToolboxBroadcastReceiver(private val app: HeadphoneToolbox) : BroadcastRec
 
                 bluetoothAdapter.bondedDevices.forEach {
                     if (it.bluetoothClass.majorDeviceClass == BluetoothClass.Device.Major.AUDIO_VIDEO) {
-                        app.logger.info("蓝牙耳机已连接")
+                        logger.info("蓝牙耳机已连接")
                         hasAudio = true
                         return@forEach
                     }
