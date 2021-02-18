@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar_ad"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@android:color/white"
+        android:elevation="4dp" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch_show_ads"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="我想要观看广告" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch_click_ads"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="我想要点击广告，并愿意被引导到耳机工具箱之外的区域" />
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/app_ad1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:adSize="BANNER"
+        app:adUnitId="ca-app-pub-4552223397576278/2327912145" />
+
+    <TextView
+        android:id="@+id/no_gms_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="你的设备不支持Google Play服务，广告可能无法正常显示" />
+</LinearLayout>

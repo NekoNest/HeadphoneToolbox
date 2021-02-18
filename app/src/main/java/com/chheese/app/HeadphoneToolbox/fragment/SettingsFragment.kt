@@ -1,6 +1,7 @@
 package com.chheese.app.HeadphoneToolbox.fragment
 
 import android.annotation.SuppressLint
+import android.app.ActivityManager
 import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
@@ -8,10 +9,12 @@ import android.os.Build
 import android.provider.Settings
 import android.view.LayoutInflater
 import android.widget.Toast
+import androidx.core.content.getSystemService
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.SwitchPreference
 import com.chheese.app.HeadphoneToolbox.R
+import com.chheese.app.HeadphoneToolbox.activity.AdScreen
 import com.chheese.app.HeadphoneToolbox.activity.LogListActivity
 import com.chheese.app.HeadphoneToolbox.util.edit
 import com.chheese.app.HeadphoneToolbox.util.get
@@ -54,6 +57,9 @@ class SettingsFragment : AbstractPreferenceFragment(R.xml.preference_settings) {
     @BindKey("about_author")
     private lateinit var aboutAuthor: Preference
 
+    @BindKey("ad_screen")
+    private lateinit var adScreen: Preference
+
     init {
         messageCallback = {
             if (it == FLAG_FRAGMENT_SHOWN) {
@@ -79,6 +85,13 @@ class SettingsFragment : AbstractPreferenceFragment(R.xml.preference_settings) {
         customNotify.setOnPreferenceClickListener(this::onCustomNotifyClick)
         customNotify.isVisible =
             selectedBackgroundMethod == res.getStringArray(R.array.backgroundMethods)[0]
+        adScreen.isVisible =
+            app.sharedPreferences.get(res, R.string.enableExperimentalFeature, false)
+
+        adScreen.setOnPreferenceClickListener {
+            startActivity(Intent(requireActivity(), AdScreen::class.java))
+            true
+        }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             backgroundMethod.isVisible = false
@@ -149,11 +162,18 @@ class SettingsFragment : AbstractPreferenceFragment(R.xml.preference_settings) {
             if (enableExperimentalFeature.isChecked) {
                 AlertDialog.Builder(requireActivity())
                     .setTitle("二次确认")
-                    .setMessage("实验版特性一般处于开发阶段，可能存在大量bug，甚至导致应用崩溃，是否继续开启？")
-                    .setPositiveButton("我爱做实验！") { _, _ -> }
+                    .setMessage("实验版特性一般处于开发阶段，可能存在大量bug，甚至导致应用崩溃，是否继续开启？打开或关闭后应用需要重启。")
+                    .setCancelable(false)
+                    .setPositiveButton("我爱做实验！") { _, _ ->
+                        requireActivity().getSystemService<ActivityManager>()
+                            ?.killBackgroundProcesses(requireActivity().packageName)
+                    }
                     .setNegativeButton("拜拜了您嘞") { _, _ ->
                         enableExperimentalFeature.isChecked = false
                     }.create().show()
+            } else {
+                val activityManager = requireActivity().getSystemService<ActivityManager>()
+                activityManager?.killBackgroundProcesses(requireActivity().packageName)
             }
             true
         }

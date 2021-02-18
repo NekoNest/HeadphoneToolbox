@@ -66,6 +66,10 @@
             android:summaryOn="现在您不会在启动时看到提示"
             android:title="关闭启动时的免费软件提示" />
         <Preference
+            android:key="@string/adScreen"
+            android:summary="如果想支持开发，可以点一下广告"
+            android:title="广告屏" />
+        <Preference
             android:key="@string/openInCoolapk"
             android:summary="查看他人对于耳机工具箱的评论"
             android:title="在酷安中查看详情" />

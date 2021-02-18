@@ -21,6 +21,7 @@
     <string name="enableExperimentalFeature">enable_experimental_feature</string>
     <string name="showAllApps">show_all_apps</string>
     <string name="disableFreeAppDialog">disable_free_app_dialog</string>
+    <string name="adScreen">ad_screen</string>
 
     <string-array name="backgroundMethods">
         <item>显示常驻通知(>=安卓8.0推荐)</item>
