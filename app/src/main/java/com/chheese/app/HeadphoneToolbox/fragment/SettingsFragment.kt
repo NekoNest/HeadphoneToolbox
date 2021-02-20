@@ -1,13 +1,11 @@
 package com.chheese.app.HeadphoneToolbox.fragment
 
-import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
+import android.os.Message
 import android.provider.Settings
-import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.core.content.getSystemService
 import androidx.preference.Preference
@@ -18,46 +16,18 @@ import com.chheese.app.HeadphoneToolbox.activity.AdScreen
 import com.chheese.app.HeadphoneToolbox.activity.LogListActivity
 import com.chheese.app.HeadphoneToolbox.util.edit
 import com.chheese.app.HeadphoneToolbox.util.get
-import com.google.android.material.textfield.TextInputEditText
 
-class SettingsFragment : AbstractPreferenceFragment(R.xml.preference_settings) {
-    @BindKey("background_method")
-    private lateinit var backgroundMethod: Preference
-
-    @BindKey("custom_notify")
-    private lateinit var customNotify: Preference
-
-    @BindKey("player_settings")
+class SettingsFragment : BaseFragment(R.xml.preference_settings) {
     private lateinit var playerSettings: PreferenceCategory
-
-    @BindKey("alert_on_open")
     private lateinit var alertBeforeOpen: SwitchPreference
-
-    @BindKey("select_player")
     private lateinit var selectPlayer: Preference
-
-    @BindKey("view_log")
     private lateinit var viewLog: Preference
-
-    @BindKey("open_details")
     private lateinit var openDetails: Preference
-
-    @BindKey("open_in_coolapk")
     private lateinit var openCoolapk: Preference
-
-    @BindKey("about")
     private lateinit var about: Preference
-
-    @BindKey("allow_parallel")
     private lateinit var allowParallel: SwitchPreference
-
-    @BindKey("enable_experimental_feature")
     private lateinit var enableExperimentalFeature: SwitchPreference
-
-    @BindKey("about_author")
     private lateinit var aboutAuthor: Preference
-
-    @BindKey("ad_screen")
     private lateinit var adScreen: Preference
 
     init {
@@ -71,31 +41,27 @@ class SettingsFragment : AbstractPreferenceFragment(R.xml.preference_settings) {
         }
     }
 
-    override fun init() {
-        backgroundMethod.setOnPreferenceClickListener(this::onBackgroundMethodClick)
-        val selectedBackgroundMethod =
-            app.sharedPreferences.getString(res.getString(R.string.backgroundMethod), "")
-        backgroundMethod.summary = if (selectedBackgroundMethod == "") {
-            "当前没有选择"
-        } else {
-            "当前已选择：$selectedBackgroundMethod"
-        }
+    override fun initPreferences() {
+        playerSettings = findPreference("player_settings")!!
+        alertBeforeOpen = findPreference("alert_on_open")!!
+        selectPlayer = findPreference("select_player")!!
+        viewLog = findPreference("view_log")!!
+        openDetails = findPreference("open_details")!!
+        openCoolapk = findPreference("open_in_coolapk")!!
+        about = findPreference("about")!!
+        allowParallel = findPreference("allow_parallel")!!
+        enableExperimentalFeature = findPreference("enable_experimental_feature")!!
+        aboutAuthor = findPreference("about_author")!!
+        adScreen = findPreference("ad_screen")!!
+
         playerSettings.isVisible = app.sharedPreferences
             .getBoolean(res.getString(R.string.openPlayer), false)
-        customNotify.setOnPreferenceClickListener(this::onCustomNotifyClick)
-        customNotify.isVisible =
-            selectedBackgroundMethod == res.getStringArray(R.array.backgroundMethods)[0]
         adScreen.isVisible =
             app.sharedPreferences.get(res, R.string.enableExperimentalFeature, false)
 
         adScreen.setOnPreferenceClickListener {
             startActivity(Intent(requireActivity(), AdScreen::class.java))
             true
-        }
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            backgroundMethod.isVisible = false
-            customNotify.isVisible = false
         }
 
         alertBeforeOpen.setOnPreferenceClickListener(this::onAlertOnOpenPrefClick)
@@ -179,6 +145,14 @@ class SettingsFragment : AbstractPreferenceFragment(R.xml.preference_settings) {
         }
 
         aboutAuthor.setOnPreferenceClickListener(this::onAboutAuthorClick)
+    }
+
+    override fun addObservers() {
+
+    }
+
+    override fun onBatteryPermissionGrantFailed() {
+
     }
 
     private fun onAboutClick(pref: Preference): Boolean {
@@ -275,69 +249,7 @@ class SettingsFragment : AbstractPreferenceFragment(R.xml.preference_settings) {
         return true
     }
 
-    private fun onBackgroundMethodClick(pref: Preference): Boolean {
-        val itemArray = res.getStringArray(R.array.backgroundMethods)
-        val checkedItem =
-            itemArray.indexOf(app.sharedPreferences.get(res, R.string.backgroundMethod, ""))
-        AlertDialog.Builder(requireContext())
-            .setSingleChoiceItems(itemArray, checkedItem) { dialog, which ->
-                val selected = res.getStringArray(R.array.backgroundMethods)[which]
-                app.sharedPreferences.edit {
-                    putString(pref.key, selected)
-                }
-                pref.summary = "当前已选择：$selected"
-                if (which == 0) {
-                    customNotify.isVisible = true
-                } else if (which == 1) {
-                    requestIgnoreBatteryOptimizations()
-                    customNotify.isVisible = false
-                }
-                dialog.cancel()
-            }.create().show()
-        return true
-    }
-
-    @SuppressLint("InflateParams")
-    private fun onCustomNotifyClick(pref: Preference): Boolean {
-        val dialogView =
-            LayoutInflater.from(requireContext()).inflate(R.layout.dialog_cutom_notify, null)
-        val titleEditor = dialogView.findViewById<TextInputEditText>(R.id.title_edit)
-        val messageEditor = dialogView.findViewById<TextInputEditText>(R.id.message_edit)
-
-        AlertDialog.Builder(requireContext())
-            .setView(dialogView)
-            .setPositiveButton("完成") { _, _ ->
-                app.sharedPreferences.edit {
-                    val title = titleEditor.text
-                    if (title != null) {
-                        putString("custom_notify_title", title.toString())
-                    }
-                    val message = messageEditor.text
-                    if (message != null) {
-                        putString("custom_notify_message", message.toString())
-                    }
-                }
-            }.setNegativeButton("取消") { _, _ -> }
-            .create().show()
-        return true
-    }
-
-    override fun onIgnoreBatteryOptimizationActivity(accept: Boolean) {
-        if (!accept) {
-            AlertDialog.Builder(requireContext())
-                .setTitle("诶？")
-                .setMessage("你拒绝了权限请求，是手滑了吗？")
-                .setPositiveButton("是，再来一次") { _, _ ->
-                    requestIgnoreBatteryOptimizations()
-                }.setNegativeButton("没有，我反悔了") { _, _ ->
-                    backgroundMethod.summary = "当前没有选择"
-                    app.sharedPreferences.edit {
-                        putString(backgroundMethod.key, "")
-                    }
-                }
-                .create().show()
-        }
-    }
+    override fun handleMessage(message: Message) = true
 
     companion object {
         const val FLAG_IGNORE_BATTERY_OPTIMIZATIONS = 0xf001

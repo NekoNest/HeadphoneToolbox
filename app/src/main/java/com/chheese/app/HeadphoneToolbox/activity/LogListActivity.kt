@@ -14,7 +14,7 @@ import com.chheese.app.HeadphoneToolbox.util.logger
 import com.google.android.material.appbar.MaterialToolbar
 import java.io.File
 
-class LogListActivity : NoActionBarActivity() {
+class LogListActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -30,7 +30,7 @@ class LogListActivity : NoActionBarActivity() {
         supportActionBar?.apply {
             setHomeButtonEnabled(true)
             setDisplayHomeAsUpEnabled(true)
-            setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24)
+            setHomeAsUpIndicator(R.drawable.ic_arrow_back)
             title = "日志列表"
         }
 

@@ -7,7 +7,7 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textview.MaterialTextView
 import java.io.File
 
-class ViewLogActivity : NoActionBarActivity() {
+class ViewLogActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_log)
@@ -22,7 +22,7 @@ class ViewLogActivity : NoActionBarActivity() {
         supportActionBar?.apply {
             setHomeButtonEnabled(true)
             setDisplayHomeAsUpEnabled(true)
-            setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24)
+            setHomeAsUpIndicator(R.drawable.ic_arrow_back)
             title = file.name
         }
     }

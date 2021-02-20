@@ -10,7 +10,7 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.material.appbar.MaterialToolbar
 
-class AdScreen : NoActionBarActivity() {
+class AdScreen : BaseActivity() {
     private lateinit var noGmsHint: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,7 +36,9 @@ class AdScreen : NoActionBarActivity() {
         showSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
             ad1.isVisible = isChecked
             if (isChecked) {
-                val adRequest = AdRequest.Builder().build()
+                val adRequest = AdRequest.Builder()
+                    .addTestDevice("B54C29A9E1A78883CD5A0D755EEDB04F")
+                    .build()
                 ad1.loadAd(adRequest)
             }
         }

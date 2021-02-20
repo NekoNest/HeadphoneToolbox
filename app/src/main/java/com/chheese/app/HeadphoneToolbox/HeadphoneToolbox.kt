@@ -1,18 +1,35 @@
 package com.chheese.app.HeadphoneToolbox
 
+import android.app.Activity
 import android.app.Application
+import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import androidx.preference.PreferenceManager
+import com.chheese.app.HeadphoneToolbox.data.SharedAppData
+import com.chheese.app.HeadphoneToolbox.service.ToolboxService
 import com.chheese.app.HeadphoneToolbox.util.get
 import com.chheese.app.HeadphoneToolbox.util.logger
+import com.chheese.app.HeadphoneToolbox.util.setTo
 import com.google.android.gms.ads.MobileAds
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-class HeadphoneToolbox : Application() {
+class HeadphoneToolbox : Application(), LifecycleOwner, Application.ActivityLifecycleCallbacks {
+    private val lifecycleRegistry = LifecycleRegistry(this)
+    private val handler = Handler()
+    private lateinit var mLastDispatchRunnable: DispatchRunnable
+
     lateinit var sharedPreferences: SharedPreferences
     override fun onCreate() {
+        postDispatchRunnable(Lifecycle.Event.ON_CREATE)
+        postDispatchRunnable(Lifecycle.Event.ON_START)
         super.onCreate()
         val fileName = SimpleDateFormat("yyyy-MM-dd", Locale.CHINESE)
             .format(System.currentTimeMillis()) + ".log"
@@ -34,6 +51,107 @@ class HeadphoneToolbox : Application() {
                     logger.info("广告适配器：${entry.key}，初始化状态：${entry.value.initializationState}")
                 }
             }
+        }
+
+        initLiveData()
+
+        registerActivityLifecycleCallbacks(this)
+    }
+
+    override fun onTerminate() {
+        postDispatchRunnable(Lifecycle.Event.ON_STOP)
+        postDispatchRunnable(Lifecycle.Event.ON_DESTROY)
+        super.onTerminate()
+    }
+
+    private fun initLiveData() {
+        SharedAppData.lightScreen.value = sharedPreferences.get(
+            resources,
+            R.string.lightScreen,
+            false
+        )
+
+        SharedAppData.lightScreen.observe(this) {
+            // 检查两个功能是否都处于关闭状态
+            // 如果否就启动后台服务
+            checkFeatureStatus()
+        }
+        SharedAppData.openPlayer.observe(this) {
+            // 检查两个功能是否都处于关闭状态
+            // 如果否就启动后台服务
+            checkFeatureStatus()
+        }
+    }
+
+    private fun checkFeatureStatus() {
+        if (SharedAppData.lightScreen.value!! || SharedAppData.openPlayer.value!!) {
+            logger.info("两个需要后台服务的功能中有一个处于开启状态，需要启动后台服务")
+            startService()
+        }
+    }
+
+    private fun startService() {
+        val serviceIntent = Intent(this, ToolboxService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent)
+        } else {
+            startService(serviceIntent)
+        }
+    }
+
+    override fun getLifecycle() = lifecycleRegistry
+
+    private fun postDispatchRunnable(event: Lifecycle.Event) {
+        if (this::mLastDispatchRunnable.isInitialized) {
+            mLastDispatchRunnable.run()
+        }
+        mLastDispatchRunnable = DispatchRunnable(lifecycleRegistry, event)
+        handler.postAtFrontOfQueue(mLastDispatchRunnable)
+    }
+
+    internal class DispatchRunnable(
+        private val mRegistry: LifecycleRegistry,
+        val mEvent: Lifecycle.Event
+    ) : Runnable {
+        private var mWasExecuted = false
+        override fun run() {
+            if (!mWasExecuted) {
+                mRegistry.handleLifecycleEvent(mEvent)
+                mWasExecuted = true
+            }
+        }
+    }
+
+    // 以下是应用内Activity生命周期回调
+    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+        logger.verbose("${activity::class.java.simpleName}: onCreate")
+    }
+
+    override fun onActivityStarted(activity: Activity) {
+        logger.verbose("${activity::class.java.simpleName}: onStart")
+    }
+
+    override fun onActivityResumed(activity: Activity) {
+        logger.verbose("${activity::class.java.simpleName}: onResumed")
+        SharedAppData.topActivity setTo activity
+    }
+
+    override fun onActivityPaused(activity: Activity) {
+        logger.verbose("${activity::class.java.simpleName}: onPause")
+    }
+
+    override fun onActivityStopped(activity: Activity) {
+        logger.verbose("${activity::class.java.simpleName}: onStopped")
+    }
+
+    override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
+        logger.verbose("${activity::class.java.simpleName}: onSaveInstance")
+    }
+
+    override fun onActivityDestroyed(activity: Activity) {
+        logger.verbose("${activity::class.java.simpleName}: onDestroyed")
+        if (SharedAppData.topActivity.value == activity) {
+            SharedAppData.topActivity setTo null
         }
     }
 }

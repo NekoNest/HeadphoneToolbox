@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
         android:key="@string/playerSettings"
         android:title="播放器设置">
@@ -26,17 +25,6 @@
             android:key="@string/allowBluetooth"
             android:summary="当蓝牙耳机连接时也会触发已开启的操作"
             android:title="允许扫描蓝牙设备" />
-        <Preference
-            android:icon="@drawable/ic_baseline_flip_to_back_24"
-            android:key="@string/backgroundMethod"
-            android:summary="当前没有选择"
-            android:title="选择后台服务驻留方式" />
-        <Preference
-            android:icon="@drawable/ic_baseline_comment_24"
-            android:key="@string/customNotify"
-            android:summary="你也可以直接隐藏掉通知"
-            android:title="自定义后台通知信息"
-            app:isPreferenceVisible="false" />
         <SwitchPreference
             android:icon="@drawable/ic_repeat"
             android:key="@string/allowParallel"

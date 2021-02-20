@@ -2,36 +2,98 @@ package com.chheese.app.HeadphoneToolbox.fragment
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.os.Build
+import android.os.Message
 import android.view.LayoutInflater
 import androidx.annotation.RawRes
+import androidx.core.content.res.ResourcesCompat
 import androidx.preference.Preference
 import androidx.preference.SwitchPreference
 import com.chheese.app.HeadphoneToolbox.R
 import com.chheese.app.HeadphoneToolbox.activity.ToolboxActivity
-import com.chheese.app.HeadphoneToolbox.util.get
+import com.chheese.app.HeadphoneToolbox.data.SharedAppData
 import com.chheese.app.HeadphoneToolbox.util.logger
 import com.chheese.app.HeadphoneToolbox.util.newMessage
+import com.chheese.app.HeadphoneToolbox.util.setTo
 import com.google.android.material.button.MaterialButton
 import kotlin.random.Random
 
-class MainFragment : AbstractPreferenceFragment(R.xml.preference_main) {
+class MainFragment : BaseFragment(R.xml.preference_main) {
     private var leftAudioMap: Map<Int, Int>? = null
     private var rightAudioMap: Map<Int, Int>? = null
 
-    @BindKey("light_screen")
     private lateinit var lightScreen: SwitchPreference
-
-    @BindKey("open_player")
     private lateinit var openPlayer: SwitchPreference
-
-    @BindKey("channel_test")
     private lateinit var channelTest: Preference
 
-    override fun init() {
-        lightScreen.setOnPreferenceClickListener(this::checkBackgroundMethodSetting)
-        openPlayer.setOnPreferenceClickListener(this::checkBackgroundMethodSetting)
+    override fun initPreferences() {
+        lightScreen = findPreference("light_screen")!!
+        openPlayer = findPreference("open_player")!!
+        channelTest = findPreference("channel_test")!!
+
+        lightScreen.setOnPreferenceClickListener(this::onLightScreenPrefClick)
+        openPlayer.setOnPreferenceClickListener(this::onOpenPlayerPrefClick)
         channelTest.setOnPreferenceClickListener(this::onChannelTestClick)
+    }
+
+    override fun addObservers() {
+        SharedAppData.lightScreen.observe(this) {
+            lightScreen.isChecked = it
+            lightScreen.icon = if (it) {
+                ResourcesCompat.getDrawable(
+                    resources,
+                    R.drawable.ic_light_screen_on,
+                    requireActivity().theme
+                )
+            } else {
+                ResourcesCompat.getDrawable(
+                    resources,
+                    R.drawable.ic_light_screen_off,
+                    requireActivity().theme
+                )
+            }
+        }
+        SharedAppData.openPlayer.observe(this) {
+            openPlayer.isChecked = it
+        }
+    }
+
+    /**
+     * 当功能【点亮屏幕】开关被点击时触发的操作
+     */
+    private fun onLightScreenPrefClick(pref: Preference): Boolean {
+        (pref as SwitchPreference).apply {
+            // 关掉开关就不用管了吧
+            SharedAppData.lightScreen.value = isChecked
+            if (!isChecked) {
+                logger.info("用户在应用内关闭了功能【点亮屏幕】的开关")
+                return@apply
+            }
+            logger.info("用户在应用内打开了功能【点亮屏幕】的开关")
+            // 检查权限
+            if (!isIgnoringBatteryOptimizations()) {
+                logger.info("需要忽略电池优化权限")
+                requestBatteryPermission()
+            }
+        }
+        return true
+    }
+
+    private fun onOpenPlayerPrefClick(pref: Preference): Boolean {
+        (pref as SwitchPreference).apply {
+            // 关掉开关就不用管了吧
+            SharedAppData.openPlayer.value = isChecked
+            if (!isChecked) {
+                logger.info("用户在应用内关闭了功能【打开播放器】的开关")
+                return@apply
+            }
+            logger.info("用户在应用内打开了功能【打开播放器】的开关")
+            // 检查权限
+            if (!isIgnoringBatteryOptimizations()) {
+                logger.info("需要忽略电池优化权限")
+                requestBatteryPermission()
+            }
+        }
+        return true
     }
 
     @SuppressLint("InflateParams")
@@ -83,40 +145,20 @@ class MainFragment : AbstractPreferenceFragment(R.xml.preference_main) {
         return audioMap[randInt] ?: error("Index $randInt is not in map.")
     }
 
-    private fun checkBackgroundMethodSetting(preference: Preference): Boolean {
-        val pref = preference as SwitchPreference
-        val value = preference.isChecked
-        val switchName = when (preference.key) {
-            res.getString(R.string.lightScreen) -> "点亮屏幕"
-            res.getString(R.string.openPlayer) -> "打开播放器"
-            else -> ""
-        }
-        logger.info("${switchName}开关状态被改变，新状态：$value")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val backgroundMethod =
-                app.sharedPreferences.get(app.resources, R.string.backgroundMethod, "")
-            if (value && (backgroundMethod == "")) {
-                newBackgroundMethodDialog(requireActivity() as ToolboxActivity, pref).show()
-                return false
-            }
-        } else {
-            requestIgnoreBatteryOptimizations()
-        }
-        return true
+    override fun onBatteryPermissionGrantFailed() {
+        lightScreen.isChecked = false
+        openPlayer.isChecked = false
+        SharedAppData.lightScreen setTo false
+        SharedAppData.openPlayer setTo false
     }
 
-    override fun onIgnoreBatteryOptimizationActivity(accept: Boolean) {
-        if (!accept) {
-            AlertDialog.Builder(requireContext())
-                .setTitle("诶？")
-                .setMessage("你拒绝了权限请求，是手滑了吗？")
-                .setPositiveButton("是，再来一次") { _, _ ->
-                    requestIgnoreBatteryOptimizations()
-                }.setNegativeButton("没有，我反悔了") { _, _ ->
-                    lightScreen.isChecked = false
-                    openPlayer.isChecked = false
-                }
-                .create().show()
+    override fun handleMessage(message: Message): Boolean {
+        if (message.what == REQUEST_IGNORE_BATTERY_OPTIMIZATION_FAILED) {
+            lightScreen.isChecked = false
+            openPlayer.isChecked = false
+            SharedAppData.lightScreen setTo false
+            SharedAppData.openPlayer setTo false
         }
+        return true
     }
 }

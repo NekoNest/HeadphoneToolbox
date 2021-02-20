@@ -1,31 +1,31 @@
 package com.chheese.app.HeadphoneToolbox.activity
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.os.*
 import android.provider.Settings
 import android.widget.Toast
 import androidx.annotation.RawRes
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.FragmentTransaction
 import com.chheese.app.HeadphoneToolbox.HeadphoneToolbox
 import com.chheese.app.HeadphoneToolbox.R
-import com.chheese.app.HeadphoneToolbox.ToolboxService
-import com.chheese.app.HeadphoneToolbox.fragment.AbstractPreferenceFragment
+import com.chheese.app.HeadphoneToolbox.fragment.BaseFragment
 import com.chheese.app.HeadphoneToolbox.fragment.MainFragment
 import com.chheese.app.HeadphoneToolbox.fragment.SettingsFragment
 import com.chheese.app.HeadphoneToolbox.util.get
 import com.chheese.app.HeadphoneToolbox.util.logger
+import com.chheese.app.HeadphoneToolbox.util.newMessage
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class ToolboxActivity : NoActionBarActivity() {
+class ToolboxActivity : BaseActivity() {
     private val mainFragment = MainFragment()
     private val settingsFragment = SettingsFragment()
-    private var currentFragment: AbstractPreferenceFragment? = null
+    private var currentFragmentParent: BaseFragment? = null
     lateinit var handler: Handler
 
     private var mediaPlayer: MediaPlayer? = null
@@ -37,25 +37,19 @@ class ToolboxActivity : NoActionBarActivity() {
         super.onCreate(savedInstanceState)
 
         val looper = Looper.getMainLooper()
-        handler = Handler(looper) {
-            when (it.what) {
-                FLAG_GO_SETTINGS -> {
-                    if (this::mainNav.isInitialized) {
-                        mainNav.selectedItemId = R.id.settings
-                    }
-                    true
-                }
-                FLAG_PLAY_AUDIO -> {
-                    playMedia(it.arg1)
-                    true
-                }
-                else -> false
-            }
-        }
+        handler = Handler(looper, this::handleMessage)
 
         app = application as HeadphoneToolbox
 
         setContentView(R.layout.activity_toolbox)
+
+        // 如果是被开关启动的，而且要求忽略电池优化
+        // 就进行请求
+        if (intent != null) {
+            if (intent.getBooleanExtra("for_ignore_battery_optimizations", false)) {
+                requestIgnoreBatteryOptimizations()
+            }
+        }
 
         mainNav = findViewById(R.id.nav_main)
         mainToolbar = findViewById(R.id.toolbar_main)
@@ -84,8 +78,26 @@ class ToolboxActivity : NoActionBarActivity() {
                 .setData(Uri.fromParts("package", packageName, null))
             startActivity(intent)
         }
+    }
 
-        startService()
+    private fun handleMessage(msg: Message): Boolean {
+        return when (msg.what) {
+            FLAG_GO_SETTINGS -> {
+                if (this::mainNav.isInitialized) {
+                    mainNav.selectedItemId = R.id.settings
+                }
+                true
+            }
+            FLAG_PLAY_AUDIO -> {
+                playMedia(msg.arg1)
+                true
+            }
+            SHOW_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS -> {
+                requestIgnoreBatteryOptimizations()
+                true
+            }
+            else -> false
+        }
     }
 
     private fun playMedia(@RawRes id: Int) {
@@ -116,20 +128,15 @@ class ToolboxActivity : NoActionBarActivity() {
         }
     }
 
-    private fun startService() {
-        val backgroundMethod =
-            app.sharedPreferences.get(resources, R.string.backgroundMethod, "")
-        val backgroundMethods = resources.getStringArray(R.array.backgroundMethods)
-        val serviceIntent = Intent(this, ToolboxService::class.java)
-        if (backgroundMethods.indexOf(backgroundMethod) == 0) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(serviceIntent)
-            } else {
-                startService(serviceIntent)
-            }
-        } else if (backgroundMethod == backgroundMethods[1]) {
-            startService(serviceIntent)
-        }
+    @SuppressLint("BatteryLife")
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private fun requestIgnoreBatteryOptimizations() {
+        val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+        val isIgnored = pm.isIgnoringBatteryOptimizations(app.packageName)
+        if (isIgnored) return
+        val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+        intent.data = Uri.fromParts("package", app.packageName, null)
+        startActivityForResult(intent, SettingsFragment.FLAG_IGNORE_BATTERY_OPTIMIZATIONS)
     }
 
     private fun beginFragmentTransaction(block: FragmentTransaction.() -> Unit) {
@@ -138,24 +145,24 @@ class ToolboxActivity : NoActionBarActivity() {
         transaction.commit()
     }
 
-    private fun switchFragment(fragment: AbstractPreferenceFragment) {
+    private fun switchFragment(fragmentParent: BaseFragment) {
         beginFragmentTransaction {
-            if (currentFragment == null) {
-                if (fragment.isAdded) {
-                    show(fragment)
+            if (currentFragmentParent == null) {
+                if (fragmentParent.isAdded) {
+                    show(fragmentParent)
                 } else {
-                    add(R.id.frame_main, fragment)
+                    add(R.id.frame_main, fragmentParent)
                 }
             } else {
-                hide(currentFragment!!)
-                if (fragment.isAdded) {
-                    show(fragment)
+                hide(currentFragmentParent!!)
+                if (fragmentParent.isAdded) {
+                    show(fragmentParent)
                 } else {
-                    add(R.id.frame_main, fragment)
+                    add(R.id.frame_main, fragmentParent)
                 }
             }
-            fragment.handler.sendEmptyMessage(AbstractPreferenceFragment.FLAG_FRAGMENT_SHOWN)
-            currentFragment = fragment
+            fragmentParent.handler.sendEmptyMessage(BaseFragment.FLAG_FRAGMENT_SHOWN)
+            currentFragmentParent = fragmentParent
         }
     }
 
@@ -164,6 +171,21 @@ class ToolboxActivity : NoActionBarActivity() {
         if (mediaPlayer != null) {
             mediaPlayer!!.release()
             mediaPlayer = null
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == SettingsFragment.FLAG_IGNORE_BATTERY_OPTIMIZATIONS) {
+            when (resultCode) {
+                0 -> {
+                    logger.info("用户拒绝了请求")
+                    mainFragment.handler.sendMessage(newMessage(BaseFragment.REQUEST_IGNORE_BATTERY_OPTIMIZATION_FAILED))
+                }
+                -1 -> {
+                    logger.info("用户同意了请求")
+                }
+            }
         }
     }
 
