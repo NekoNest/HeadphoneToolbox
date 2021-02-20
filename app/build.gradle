@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-parcelize'
 
 android {
     compileSdkVersion 30
@@ -10,8 +10,8 @@ android {
         applicationId "com.chheese.app.HeadphoneToolbox"
         minSdkVersion 23
         targetSdkVersion 30
-        versionCode 21
-        versionName "4.0.3_milk_tea"
+        versionCode 22
+        versionName "4.1.0_ayakaneko"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

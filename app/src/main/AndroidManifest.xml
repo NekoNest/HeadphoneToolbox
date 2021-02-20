@@ -46,7 +46,27 @@
         </activity>
         <activity android:name=".activity.AdScreen" />
 
-        <service android:name=".ToolboxService" />
+        <service android:name=".service.ToolboxService" />
+
+        <service
+            android:name=".service.LightScreenTileService"
+            android:icon="@drawable/ic_light_screen_on"
+            android:label="点亮屏幕"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".service.OpenPlayerTileService"
+            android:icon="@drawable/ic_open_player"
+            android:label="打开播放器"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
 
         <!--适配全面屏-->
         <meta-data

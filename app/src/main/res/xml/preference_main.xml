@@ -2,12 +2,12 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="当耳机插入时">
         <SwitchPreference
-            android:icon="@drawable/ic_baseline_brightness_7_24"
+            android:icon="@drawable/ic_light_screen_on"
             android:key="@string/lightScreen"
             android:summary="我发光了！"
             android:title="点亮屏幕" />
         <SwitchPreference
-            android:icon="@drawable/ic_baseline_open_in_new_24"
+            android:icon="@drawable/ic_open_player"
             android:key="@string/openPlayer"
             android:summary="不用手动打开的哦"
             android:title="打开播放器" />
