@@ -1,8 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight">
-        <item name="colorPrimary">#175AE2</item>
-        <item name="colorAccent">#175AE2</item>
+        <item name="colorPrimary">#78A2F5</item>
+        <item name="colorAccent">#78A2F5</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
     </style>
@@ -12,7 +13,7 @@
     <style name="AppTheme.BottomNavigation" parent="Widget.MaterialComponents.BottomNavigationView"></style>
 
     <style name="AppTheme.Dialog" parent="Theme.MaterialComponents.Light.Dialog.Alert">
-        <item name="colorPrimary">#175AE2</item>
-        <item name="colorAccent">#175AE2</item>
+        <item name="colorPrimary">#78A2F5</item>
+        <item name="colorAccent">#78A2F5</item>
     </style>
 </resources>

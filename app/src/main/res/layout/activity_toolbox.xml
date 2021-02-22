@@ -6,10 +6,10 @@
     android:orientation="vertical">
 
     <com.google.android.material.appbar.MaterialToolbar
+        style="@style/AppTheme.ActionBar"
         android:id="@+id/toolbar_main"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@android:color/white"
         android:elevation="4dp">
 
         <com.google.android.material.textview.MaterialTextView
@@ -27,6 +27,7 @@
         android:layout_weight="1" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
+        style="@style/AppTheme.BottomNavigation"
         android:id="@+id/nav_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
