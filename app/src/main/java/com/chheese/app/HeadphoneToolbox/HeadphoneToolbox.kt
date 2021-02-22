@@ -133,6 +133,7 @@ class HeadphoneToolbox : Application(), LifecycleOwner, Application.ActivityLife
 
     override fun onActivityResumed(activity: Activity) {
         logger.verbose("${activity::class.java.simpleName}: onResumed")
+        logger.info(activity::class.java.simpleName + "目前置于顶层")
         SharedAppData.topActivity setTo activity
     }
 
@@ -142,6 +143,11 @@ class HeadphoneToolbox : Application(), LifecycleOwner, Application.ActivityLife
 
     override fun onActivityStopped(activity: Activity) {
         logger.verbose("${activity::class.java.simpleName}: onStopped")
+        logger.info(activity::class.java.simpleName + "已终止")
+        if (SharedAppData.topActivity.value == activity) {
+            logger.info("现在没有【耳机工具箱】的Activity置于顶层")
+            SharedAppData.topActivity setTo null
+        }
     }
 
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
@@ -150,8 +156,5 @@ class HeadphoneToolbox : Application(), LifecycleOwner, Application.ActivityLife
 
     override fun onActivityDestroyed(activity: Activity) {
         logger.verbose("${activity::class.java.simpleName}: onDestroyed")
-        if (SharedAppData.topActivity.value == activity) {
-            SharedAppData.topActivity setTo null
-        }
     }
 }
