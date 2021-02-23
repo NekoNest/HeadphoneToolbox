@@ -8,24 +8,24 @@ import android.net.Uri
 import android.os.*
 import android.provider.Settings
 import android.widget.Toast
+import androidx.annotation.IdRes
 import androidx.annotation.RawRes
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.MutableLiveData
 import com.chheese.app.HeadphoneToolbox.HeadphoneToolbox
 import com.chheese.app.HeadphoneToolbox.R
 import com.chheese.app.HeadphoneToolbox.fragment.BaseFragment
 import com.chheese.app.HeadphoneToolbox.fragment.MainFragment
 import com.chheese.app.HeadphoneToolbox.fragment.SettingsFragment
-import com.chheese.app.HeadphoneToolbox.util.get
-import com.chheese.app.HeadphoneToolbox.util.logger
-import com.chheese.app.HeadphoneToolbox.util.newMessage
+import com.chheese.app.HeadphoneToolbox.util.*
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class ToolboxActivity : BaseActivity() {
     private val mainFragment = MainFragment()
     private val settingsFragment = SettingsFragment()
-    private var currentFragmentParent: BaseFragment? = null
+    private var currentFragment: BaseFragment? = null
     lateinit var handler: Handler
 
     private var mediaPlayer: MediaPlayer? = null
@@ -56,20 +56,6 @@ class ToolboxActivity : BaseActivity() {
 
         setSupportActionBar(mainToolbar)
         supportActionBar!!.title = ""
-        switchFragment(mainFragment)
-        mainNav.setOnNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.main -> {
-                    switchFragment(mainFragment)
-                    true
-                }
-                R.id.settings -> {
-                    switchFragment(settingsFragment)
-                    true
-                }
-                else -> false
-            }
-        }
 
         if (app.sharedPreferences.get(resources, R.string.openDetails, false)) {
             logger.info("打开设置中的应用详情页")
@@ -77,6 +63,27 @@ class ToolboxActivity : BaseActivity() {
                 .setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                 .setData(Uri.fromParts("package", packageName, null))
             startActivity(intent)
+        }
+
+        mainNav.setOnNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.main, R.id.settings -> {
+                    selectedBottomNavId setTo it.itemId
+                    true
+                }
+                else -> false
+            }
+        }
+
+        selectedBottomNavId.observe(this, this::switchFragment)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (selectedBottomNavId.value == 0) {
+            selectedBottomNavId.value = R.id.main
+        } else {
+            selectedBottomNavId.value = selectedBottomNavId.value!!
         }
     }
 
@@ -145,33 +152,54 @@ class ToolboxActivity : BaseActivity() {
         transaction.commit()
     }
 
-    private fun switchFragment(fragmentParent: BaseFragment) {
+    private fun switchFragment(@IdRes id: Int) {
+        when (id) {
+            R.id.main -> switchFragment(mainFragment)
+            R.id.settings -> switchFragment(settingsFragment)
+            else -> logger.warn("你传了什么值进来了？$id 是什么？")
+        }
+    }
+
+    private fun switchFragment(fragment: BaseFragment) {
+        logger.info("要切换到${fragment}")
         beginFragmentTransaction {
-            if (currentFragmentParent == null) {
-                if (fragmentParent.isAdded) {
-                    show(fragmentParent)
+            if (currentFragment == null) {
+                if (fragment.isAdded) {
+                    show(fragment)
+                    this@ToolboxActivity.logger.verbose("添加了${fragment}")
                 } else {
-                    add(R.id.frame_main, fragmentParent)
+                    add(R.id.frame_main, fragment)
+                    this@ToolboxActivity.logger.verbose("添加了${fragment}")
                 }
             } else {
-                hide(currentFragmentParent!!)
-                if (fragmentParent.isAdded) {
-                    show(fragmentParent)
+                hide(currentFragment!!)
+                if (fragment.isAdded) {
+                    show(fragment)
+                    this@ToolboxActivity.logger.verbose("添加了${fragment}")
                 } else {
-                    add(R.id.frame_main, fragmentParent)
+                    add(R.id.frame_main, fragment)
+                    this@ToolboxActivity.logger.verbose("添加了${fragment}")
                 }
             }
-            fragmentParent.handler.sendEmptyMessage(BaseFragment.FLAG_FRAGMENT_SHOWN)
-            currentFragmentParent = fragmentParent
+            fragment.handler.sendEmptyMessage(BaseFragment.FLAG_FRAGMENT_SHOWN)
+            currentFragment = fragment
         }
     }
 
     override fun onStop() {
-        super.onStop()
         if (mediaPlayer != null) {
             mediaPlayer!!.release()
             mediaPlayer = null
         }
+        // 停止Activity时隐藏Fragment以免出现重影
+        if (currentFragment != null) {
+            beginFragmentTransaction {
+                supportFragmentManager.fragments.forEach {
+                    hide(it) // 请hide而不是remove
+                }
+            }
+        }
+        super.onStop()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -193,5 +221,6 @@ class ToolboxActivity : BaseActivity() {
         const val FLAG_GO_SETTINGS = 0xf000
         const val FLAG_REQUEST_CODE = 0xf004
         const val FLAG_PLAY_AUDIO = 0xf006
+        val selectedBottomNavId = MutableLiveData(0)
     }
 }
