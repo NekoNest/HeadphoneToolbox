@@ -1,0 +1,61 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+plugins {
+    id("com.android.application")
+    id("kotlin-android")
+}
+
+android {
+    compileSdkVersion(30)
+    buildToolsVersion = "30.0.2"
+
+    defaultConfig {
+        applicationId = "com.chheese.app.HeadphoneToolbox"
+        minSdkVersion(23)
+        targetSdkVersion(30)
+        versionCode(25)
+        versionName = "4.1.3_matataki"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    compileOptions {
+        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+    buildFeatures {
+        compose = true
+    }
+}
+
+tasks.withType(KotlinCompile::class.java) {
+    kotlinOptions.useIR = true
+}
+
+dependencies {
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.4.30")
+    implementation("androidx.core:core-ktx:1.3.2")
+    implementation("androidx.appcompat:appcompat:1.2.0")
+    implementation("androidx.preference:preference-ktx:1.1.1")
+    implementation("androidx.lifecycle:lifecycle-service:2.3.0")
+    implementation("com.google.android.material:material:1.2.1")
+    implementation("com.gyf.immersionbar:immersionbar:3.0.0")
+    implementation("com.gyf.immersionbar:immersionbar-ktx:3.0.0")
+
+    // Jetpack Compose
+    implementation("androidx.compose.ui:ui:1.0.0-beta01")
+    implementation("androidx.compose.ui:ui-tooling:1.0.0-beta01")
+    implementation("androidx.compose.foundation:foundation:1.0.0-beta01")
+    implementation("androidx.compose.material:material:1.0.0-beta01")
+    implementation("androidx.compose.material:material-icons-core:1.0.0-beta01")
+    implementation("androidx.compose.material:material-icons-extended:1.0.0-beta01")
+    implementation("androidx.activity:activity-compose:1.3.0-alpha03")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha02")
+    implementation("androidx.compose.runtime:runtime-livedata:1.0.0-beta01")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.0.0-beta01")
+}
