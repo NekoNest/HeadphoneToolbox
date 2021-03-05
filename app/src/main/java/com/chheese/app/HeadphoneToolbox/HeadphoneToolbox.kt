@@ -16,7 +16,6 @@ import com.chheese.app.HeadphoneToolbox.service.ToolboxService
 import com.chheese.app.HeadphoneToolbox.util.get
 import com.chheese.app.HeadphoneToolbox.util.logger
 import com.chheese.app.HeadphoneToolbox.util.setTo
-import com.google.android.gms.ads.MobileAds
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -43,15 +42,6 @@ class HeadphoneToolbox : Application(), LifecycleOwner, Application.ActivityLife
 
         val isFeatureEnabled =
             sharedPreferences.get(resources, R.string.enableExperimentalFeature, false)
-
-        if (isFeatureEnabled) {
-            MobileAds.initialize(this) {
-                val statuses = it.adapterStatusMap
-                for (entry in statuses.entries) {
-                    logger.info("广告适配器：${entry.key}，初始化状态：${entry.value.initializationState}")
-                }
-            }
-        }
 
         initLiveData()
 

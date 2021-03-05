@@ -12,8 +12,8 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.SwitchPreference
 import com.chheese.app.HeadphoneToolbox.R
-import com.chheese.app.HeadphoneToolbox.activity.AdScreen
 import com.chheese.app.HeadphoneToolbox.activity.LogListActivity
+import com.chheese.app.HeadphoneToolbox.data.SharedAppData
 import com.chheese.app.HeadphoneToolbox.util.edit
 import com.chheese.app.HeadphoneToolbox.util.get
 
@@ -28,7 +28,6 @@ class SettingsFragment : BaseFragment(R.xml.preference_settings) {
     private lateinit var allowParallel: SwitchPreference
     private lateinit var enableExperimentalFeature: SwitchPreference
     private lateinit var aboutAuthor: Preference
-    private lateinit var adScreen: Preference
 
     init {
         messageCallback = {
@@ -52,17 +51,9 @@ class SettingsFragment : BaseFragment(R.xml.preference_settings) {
         allowParallel = findPreference("allow_parallel")!!
         enableExperimentalFeature = findPreference("enable_experimental_feature")!!
         aboutAuthor = findPreference("about_author")!!
-        adScreen = findPreference("ad_screen")!!
 
         playerSettings.isVisible = app.sharedPreferences
             .getBoolean(res.getString(R.string.openPlayer), false)
-        adScreen.isVisible =
-            app.sharedPreferences.get(res, R.string.enableExperimentalFeature, false)
-
-        adScreen.setOnPreferenceClickListener {
-            startActivity(Intent(requireActivity(), AdScreen::class.java))
-            true
-        }
 
         alertBeforeOpen.setOnPreferenceClickListener(this::onAlertOnOpenPrefClick)
         selectPlayer.setOnPreferenceClickListener(this::onSelectPlayerClick)
@@ -148,7 +139,9 @@ class SettingsFragment : BaseFragment(R.xml.preference_settings) {
     }
 
     override fun addObservers() {
-
+        SharedAppData.openPlayer.observe(this) {
+            playerSettings.isVisible = it
+        }
     }
 
     override fun onBatteryPermissionGrantFailed() {
