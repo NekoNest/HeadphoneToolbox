@@ -1,32 +1,36 @@
 package com.chheese.app.HeadphoneToolbox.fragment
 
-import android.app.ActivityManager
 import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Message
 import android.provider.Settings
+import android.view.View
 import android.widget.Toast
-import androidx.core.content.getSystemService
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.SwitchPreference
 import com.chheese.app.HeadphoneToolbox.R
 import com.chheese.app.HeadphoneToolbox.activity.LogListActivity
 import com.chheese.app.HeadphoneToolbox.data.SharedAppData
+import com.chheese.app.HeadphoneToolbox.util.PreferenceKeys
 import com.chheese.app.HeadphoneToolbox.util.edit
 import com.chheese.app.HeadphoneToolbox.util.get
+import com.chheese.app.HeadphoneToolbox.util.logger
+import com.google.android.material.snackbar.Snackbar
 
 class SettingsFragment : BaseFragment(R.xml.preference_settings) {
     private lateinit var playerSettings: PreferenceCategory
-    private lateinit var alertBeforeOpen: SwitchPreference
+    private lateinit var alertOnOpen: SwitchPreference
     private lateinit var selectPlayer: Preference
     private lateinit var viewLog: Preference
     private lateinit var openDetails: Preference
     private lateinit var openCoolapk: Preference
     private lateinit var about: Preference
     private lateinit var allowParallel: SwitchPreference
-    private lateinit var enableExperimentalFeature: SwitchPreference
+    private lateinit var useExperimentalFeature: SwitchPreference
+    private lateinit var experimentalFeatures: PreferenceCategory
+    private lateinit var useNewUi: SwitchPreference
     private lateinit var aboutAuthor: Preference
 
     init {
@@ -41,21 +45,25 @@ class SettingsFragment : BaseFragment(R.xml.preference_settings) {
     }
 
     override fun initPreferences() {
-        playerSettings = findPreference("player_settings")!!
-        alertBeforeOpen = findPreference("alert_on_open")!!
-        selectPlayer = findPreference("select_player")!!
-        viewLog = findPreference("view_log")!!
-        openDetails = findPreference("open_details")!!
-        openCoolapk = findPreference("open_in_coolapk")!!
-        about = findPreference("about")!!
-        allowParallel = findPreference("allow_parallel")!!
-        enableExperimentalFeature = findPreference("enable_experimental_feature")!!
-        aboutAuthor = findPreference("about_author")!!
+        playerSettings = findPreference(PreferenceKeys.CATEGORY_PLAYER_SETTINGS)!!
+        alertOnOpen = findPreference(PreferenceKeys.SWITCH_ALERT_ON_OPEN)!!
+        selectPlayer = findPreference(PreferenceKeys.PREF_SELECT_PLAYER)!!
+        viewLog = findPreference(PreferenceKeys.PREF_VIEW_LOG)!!
+        openDetails = findPreference(PreferenceKeys.PREF_OPEN_DETAILS)!!
+        openCoolapk = findPreference(PreferenceKeys.PREF_OPEN_IN_COOLAPK)!!
+        about = findPreference(PreferenceKeys.PREF_ABOUT)!!
+        allowParallel = findPreference(PreferenceKeys.SWITCH_ALLOW_PARALLEL)!!
+        useExperimentalFeature = findPreference(PreferenceKeys.SWITCH_USE_EXPERIMENTAL_FEATURE)!!
+        experimentalFeatures = findPreference(PreferenceKeys.CATEGORY_EXPERIMENTAL_FEATURES)!!
+        useNewUi = findPreference(PreferenceKeys.SWITCH_USE_NEW_UI)!!
+        aboutAuthor = findPreference(PreferenceKeys.PREF_ABOUT_AUTHOR)!!
 
         playerSettings.isVisible = app.sharedPreferences
-            .getBoolean(res.getString(R.string.openPlayer), false)
+            .getBoolean(PreferenceKeys.SWITCH_OPEN_PLAYER, false)
+        experimentalFeatures.isVisible = app.sharedPreferences
+            .getBoolean(PreferenceKeys.SWITCH_USE_EXPERIMENTAL_FEATURE, false)
 
-        alertBeforeOpen.setOnPreferenceClickListener(this::onAlertOnOpenPrefClick)
+        alertOnOpen.setOnPreferenceClickListener(this::onAlertOnOpenPrefClick)
         selectPlayer.setOnPreferenceClickListener(this::onSelectPlayerClick)
         val selectedPackage = app.sharedPreferences.get(res, R.string.selectPlayer, "")
         val matchedApp = app.packageManager.getInstalledApplications(0).filter {
@@ -115,27 +123,43 @@ class SettingsFragment : BaseFragment(R.xml.preference_settings) {
             true
         }
 
-        enableExperimentalFeature.setOnPreferenceClickListener {
-            if (enableExperimentalFeature.isChecked) {
+        useExperimentalFeature.setOnPreferenceClickListener {
+            experimentalFeatures.isVisible = (it as SwitchPreference).isChecked
+            if (useExperimentalFeature.isChecked) {
                 AlertDialog.Builder(requireActivity())
                     .setTitle("二次确认")
-                    .setMessage("实验版特性一般处于开发阶段，可能存在大量bug，甚至导致应用崩溃，是否继续开启？打开或关闭后应用需要重启。")
+                    .setMessage("实验版特性一般处于开发阶段，可能存在大量bug，甚至导致应用崩溃，确定要开启吗？")
                     .setCancelable(false)
-                    .setPositiveButton("我爱做实验！") { _, _ ->
-                        requireActivity().getSystemService<ActivityManager>()
-                            ?.killBackgroundProcesses(requireActivity().packageName)
+                    .setPositiveButton("确定") { _, _ ->
+                        makeRestartAppSnackbar()
                     }
-                    .setNegativeButton("拜拜了您嘞") { _, _ ->
-                        enableExperimentalFeature.isChecked = false
+                    .setNegativeButton("还没") { _, _ ->
+                        useExperimentalFeature.isChecked = false
+                        experimentalFeatures.isVisible = false
                     }.create().show()
             } else {
-                val activityManager = requireActivity().getSystemService<ActivityManager>()
-                activityManager?.killBackgroundProcesses(requireActivity().packageName)
+                makeRestartAppSnackbar()
             }
             true
         }
 
+        useNewUi.setOnPreferenceClickListener {
+            makeRestartAppSnackbar()
+            true
+        }
+
         aboutAuthor.setOnPreferenceClickListener(this::onAboutAuthorClick)
+    }
+
+    private fun makeRestartAppSnackbar() {
+        Snackbar.make(requireContext(), requireView(), "关闭并重启应用后生效", 3000)
+            .setAction("立即关闭", this::shutdownApp)
+            .show()
+    }
+
+    private fun shutdownApp(v: View) {
+        this@SettingsFragment.logger.info("用户要求应用自杀，并稍后手动重启")
+        Runtime.getRuntime().exit(0)
     }
 
     override fun addObservers() {

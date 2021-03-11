@@ -7,7 +7,7 @@ plugins {
 
 android {
     compileSdkVersion(30)
-    buildToolsVersion = "30.0.2"
+    buildToolsVersion = "30.0.3"
 
     defaultConfig {
         applicationId = "com.chheese.app.HeadphoneToolbox"
@@ -43,7 +43,7 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.2.0")
     implementation("androidx.preference:preference-ktx:1.1.1")
     implementation("androidx.lifecycle:lifecycle-service:2.3.0")
-    implementation("com.google.android.material:material:1.2.1")
+    implementation("com.google.android.material:material:1.3.0")
     implementation("com.gyf.immersionbar:immersionbar:3.0.0")
     implementation("com.gyf.immersionbar:immersionbar-ktx:3.0.0")
 

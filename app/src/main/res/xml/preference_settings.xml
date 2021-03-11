@@ -34,7 +34,7 @@
     <PreferenceCategory android:title="开发者选项">
         <SwitchPreference
             android:icon="@drawable/ic_test_tube_24"
-            android:key="@string/enableExperimentalFeature"
+            android:key="use_experimental_feature"
             android:summary="这并不稳定，遇到bug请及时反馈"
             android:title="启用预览版特性" />
         <Preference
@@ -46,6 +46,14 @@
             android:key="@string/viewLog"
             android:summary="此处为开发者选项"
             android:title="查看日志" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="experimental_features"
+        android:title="预览版特性">
+        <SwitchPreference
+            android:key="use_new_ui"
+            android:summary="基于Jetpack Compose打造"
+            android:title="使用新版用户界面" />
     </PreferenceCategory>
     <PreferenceCategory android:title="关于">
         <SwitchPreference
