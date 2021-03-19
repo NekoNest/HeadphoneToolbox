@@ -22,15 +22,11 @@ import com.chheese.app.HeadphoneToolbox.util.setTo
 class ToolboxService : LifecycleService() {
     private lateinit var app: HeadphoneToolbox
     private lateinit var receiver: ToolboxBroadcastReceiver
-    private lateinit var backgroundMethod: String
-    private lateinit var backgroundMethods: Array<String>
     private lateinit var foregroundNotification: Notification
 
     override fun onCreate() {
         super.onCreate()
         app = application as HeadphoneToolbox
-        backgroundMethod = app.sharedPreferences.get(resources, R.string.backgroundMethod, "")
-        backgroundMethods = resources.getStringArray(R.array.backgroundMethods)
         receiver = ToolboxBroadcastReceiver(app)
         // 当功能开关状态变化时
         // 检查功能开关是否都处于关闭状态

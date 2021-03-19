@@ -22,12 +22,12 @@ class ToolboxBroadcastReceiver(private val app: HeadphoneToolbox) : BroadcastRec
             logger.info("耳机已拔出")
         } else if (state == 1) {
             logger.info("耳机已插入")
-            if (app.sharedPreferences.get(context.resources, R.string.lightScreen, false)) {
+            if (app.sharedPreferences.get(PreferenceKeys.SWITCH_LIGHT_SCREEN, false)) {
                 requireWakelock(context)
             }
-            if (app.sharedPreferences.get(context.resources, R.string.openPlayer, false)) {
+            if (app.sharedPreferences.get(PreferenceKeys.SWITCH_OPEN_PLAYER, false)) {
                 if (app.sharedPreferences.get(
-                        context.resources, R.string.alertOnOpen, false
+                        PreferenceKeys.SWITCH_ALERT_ON_OPEN, false
                     )
                 ) {
                     showOpenDialog(app)
@@ -36,7 +36,7 @@ class ToolboxBroadcastReceiver(private val app: HeadphoneToolbox) : BroadcastRec
                 }
             }
         }
-        if (app.sharedPreferences.get(app.resources, R.string.allowBluetooth, false)) {
+        if (app.sharedPreferences.get(PreferenceKeys.SWITCH_ALLOW_BLUETOOTH, false)) {
             if (extra.getInt("android.bluetooth.adapter.extra.CONNECTION_STATE", -1) == 2
                 || extra.getInt("android.bluetooth.adapter.extra.STATE", -1) == 12
             ) {
@@ -52,9 +52,9 @@ class ToolboxBroadcastReceiver(private val app: HeadphoneToolbox) : BroadcastRec
                     }
                 }
                 if (!hasAudio) return
-                if (app.sharedPreferences.get(context.resources, R.string.openPlayer, false)) {
+                if (app.sharedPreferences.get(PreferenceKeys.SWITCH_OPEN_PLAYER, false)) {
                     if (app.sharedPreferences.get(
-                            context.resources, R.string.alertOnOpen, false
+                            PreferenceKeys.SWITCH_ALERT_ON_OPEN, false
                         )
                     ) {
                         showOpenDialog(app)
@@ -85,7 +85,7 @@ class ToolboxBroadcastReceiver(private val app: HeadphoneToolbox) : BroadcastRec
     }
 
     private fun openPlayer(app: HeadphoneToolbox) {
-        val selectedPlayer = app.sharedPreferences.get(app.resources, R.string.selectPlayer, "")
+        val selectedPlayer = app.sharedPreferences.get(PreferenceKeys.PREF_SELECT_PLAYER, "")
         if (selectedPlayer == "") {
             Toast.makeText(app, "没有选择播放器哦", Toast.LENGTH_LONG).show()
         } else {

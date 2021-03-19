@@ -13,8 +13,8 @@ android {
         applicationId = "com.chheese.app.HeadphoneToolbox"
         minSdkVersion(23)
         targetSdkVersion(30)
-        versionCode(25)
-        versionName = "4.1.3_matataki"
+        versionCode(26)
+        versionName = "4.2.0_iron"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

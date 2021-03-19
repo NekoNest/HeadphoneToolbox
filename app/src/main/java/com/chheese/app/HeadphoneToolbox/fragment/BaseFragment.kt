@@ -1,7 +1,6 @@
 package com.chheese.app.HeadphoneToolbox.fragment
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
@@ -12,6 +11,7 @@ import androidx.annotation.RequiresApi
 import androidx.annotation.XmlRes
 import androidx.preference.PreferenceFragmentCompat
 import com.chheese.app.HeadphoneToolbox.HeadphoneToolbox
+import com.chheese.app.HeadphoneToolbox.activity.ToolboxActivity
 import com.chheese.app.HeadphoneToolbox.util.isIgnoringBatteryOptimizations
 import com.chheese.app.HeadphoneToolbox.util.logger
 
@@ -23,7 +23,12 @@ abstract class BaseFragment(@XmlRes private val resId: Int) :
 
     var handler = Handler(Looper.getMainLooper(), this::handleMessage)
 
-    protected abstract fun handleMessage(message: Message): Boolean
+    protected open fun handleMessage(message: Message): Boolean {
+        if (message.what == REQUEST_IGNORE_BATTERY_OPTIMIZATION_FAILED) {
+            onBatteryPermissionGrantFailed()
+        }
+        return true
+    }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         app = requireActivity().application as HeadphoneToolbox
@@ -72,27 +77,12 @@ abstract class BaseFragment(@XmlRes private val resId: Int) :
             when (resultCode) {
                 0 -> {
                     logger.info("用户拒绝了请求")
-                    onIgnoreBatteryOptimizationActivity(false)
+                    (requireActivity() as ToolboxActivity).onIgnoreBatteryOptimizationActivityReject()
                 }
                 -1 -> {
                     logger.info("用户同意了请求")
-                    onIgnoreBatteryOptimizationActivity(true)
                 }
             }
-        }
-    }
-
-    private fun onIgnoreBatteryOptimizationActivity(accept: Boolean) {
-        if (!accept) {
-            AlertDialog.Builder(requireContext())
-                .setTitle("诶？")
-                .setMessage("你拒绝了权限请求，是手滑了吗？")
-                .setPositiveButton("是，再来一次") { _, _ ->
-                    requestIgnoreBatteryOptimizations()
-                }.setNegativeButton("没有，我反悔了") { _, _ ->
-                    onBatteryPermissionGrantFailed()
-                }
-                .create().show()
         }
     }
 

@@ -8,8 +8,9 @@ import com.chheese.app.HeadphoneToolbox.R
 import com.chheese.app.HeadphoneToolbox.util.logger
 import com.gyf.immersionbar.ktx.immersionBar
 
-open class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity : AppCompatActivity() {
     protected lateinit var app: HeadphoneToolbox
+    protected var darkMode = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         app = application as HeadphoneToolbox
@@ -21,10 +22,12 @@ open class BaseActivity : AppCompatActivity() {
                 this@BaseActivity.logger.info("用户正使用深色模式")
                 navigationBarDarkIcon(false)
                 statusBarDarkFont(false)
+                darkMode = true
             } else {
                 this@BaseActivity.logger.info("用户正使用浅色模式")
                 navigationBarDarkIcon(true)
                 statusBarDarkFont(true)
+                darkMode = false
             }
             fitsSystemWindows(true)
         }

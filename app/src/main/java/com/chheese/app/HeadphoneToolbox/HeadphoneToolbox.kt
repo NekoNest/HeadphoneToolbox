@@ -13,9 +13,7 @@ import androidx.lifecycle.LifecycleRegistry
 import androidx.preference.PreferenceManager
 import com.chheese.app.HeadphoneToolbox.data.SharedAppData
 import com.chheese.app.HeadphoneToolbox.service.ToolboxService
-import com.chheese.app.HeadphoneToolbox.util.get
-import com.chheese.app.HeadphoneToolbox.util.logger
-import com.chheese.app.HeadphoneToolbox.util.setTo
+import com.chheese.app.HeadphoneToolbox.util.*
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -26,6 +24,7 @@ class HeadphoneToolbox : Application(), LifecycleOwner, Application.ActivityLife
     private lateinit var mLastDispatchRunnable: DispatchRunnable
 
     lateinit var sharedPreferences: SharedPreferences
+
     override fun onCreate() {
         postDispatchRunnable(Lifecycle.Event.ON_CREATE)
         postDispatchRunnable(Lifecycle.Event.ON_START)
@@ -40,9 +39,6 @@ class HeadphoneToolbox : Application(), LifecycleOwner, Application.ActivityLife
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         logger.info("数据存储器初始化完成")
 
-        val isFeatureEnabled =
-            sharedPreferences.get(resources, R.string.enableExperimentalFeature, false)
-
         initLiveData()
 
         registerActivityLifecycleCallbacks(this)
@@ -55,21 +51,26 @@ class HeadphoneToolbox : Application(), LifecycleOwner, Application.ActivityLife
     }
 
     private fun initLiveData() {
-        SharedAppData.lightScreen.value = sharedPreferences.get(
-            resources,
-            R.string.lightScreen,
-            false
-        )
+        SharedAppData.lightScreen.value =
+            sharedPreferences.get(PreferenceKeys.SWITCH_LIGHT_SCREEN, false)
+        SharedAppData.openPlayer.value =
+            sharedPreferences.get(PreferenceKeys.SWITCH_OPEN_PLAYER, false)
 
         SharedAppData.lightScreen.observe(this) {
             // 检查两个功能是否都处于关闭状态
             // 如果否就启动后台服务
             checkFeatureStatus()
+            sharedPreferences.edit {
+                putBoolean(PreferenceKeys.SWITCH_LIGHT_SCREEN, it)
+            }
         }
         SharedAppData.openPlayer.observe(this) {
             // 检查两个功能是否都处于关闭状态
             // 如果否就启动后台服务
             checkFeatureStatus()
+            sharedPreferences.edit {
+                putBoolean(PreferenceKeys.SWITCH_OPEN_PLAYER, it)
+            }
         }
     }
 
@@ -101,7 +102,7 @@ class HeadphoneToolbox : Application(), LifecycleOwner, Application.ActivityLife
 
     internal class DispatchRunnable(
         private val mRegistry: LifecycleRegistry,
-        val mEvent: Lifecycle.Event
+        private val mEvent: Lifecycle.Event
     ) : Runnable {
         private var mWasExecuted = false
         override fun run() {

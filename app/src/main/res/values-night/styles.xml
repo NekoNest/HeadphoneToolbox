@@ -8,9 +8,9 @@
         <item name="windowActionBar">false</item>
     </style>
 
-    <style name="AppTheme.ActionBar" parent="Widget.MaterialComponents.Toolbar.Surface"></style>
+    <style name="AppTheme.ActionBar" parent="Widget.MaterialComponents.Toolbar.Surface" />
 
-    <style name="AppTheme.BottomNavigation" parent="Widget.MaterialComponents.BottomNavigationView"></style>
+    <style name="AppTheme.BottomNavigation" parent="Widget.MaterialComponents.BottomNavigationView" />
 
     <style name="AppTheme.Dialog" parent="Theme.MaterialComponents.Light.Dialog.Alert">
         <item name="colorPrimary">#78A2F5</item>

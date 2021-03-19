@@ -18,6 +18,7 @@ import com.chheese.app.HeadphoneToolbox.util.edit
 import com.chheese.app.HeadphoneToolbox.util.get
 import com.chheese.app.HeadphoneToolbox.util.logger
 import com.google.android.material.snackbar.Snackbar
+import kotlin.system.exitProcess
 
 class SettingsFragment : BaseFragment(R.xml.preference_settings) {
     private lateinit var playerSettings: PreferenceCategory
@@ -65,7 +66,7 @@ class SettingsFragment : BaseFragment(R.xml.preference_settings) {
 
         alertOnOpen.setOnPreferenceClickListener(this::onAlertOnOpenPrefClick)
         selectPlayer.setOnPreferenceClickListener(this::onSelectPlayerClick)
-        val selectedPackage = app.sharedPreferences.get(res, R.string.selectPlayer, "")
+        val selectedPackage = app.sharedPreferences.get(PreferenceKeys.PREF_SELECT_PLAYER, "")
         val matchedApp = app.packageManager.getInstalledApplications(0).filter {
             it.packageName == selectedPackage
         }
@@ -124,8 +125,9 @@ class SettingsFragment : BaseFragment(R.xml.preference_settings) {
         }
 
         useExperimentalFeature.setOnPreferenceClickListener {
-            experimentalFeatures.isVisible = (it as SwitchPreference).isChecked
-            if (useExperimentalFeature.isChecked) {
+            val isChecked = (it as SwitchPreference).isChecked
+            experimentalFeatures.isVisible = isChecked
+            if (isChecked) {
                 AlertDialog.Builder(requireActivity())
                     .setTitle("二次确认")
                     .setMessage("实验版特性一般处于开发阶段，可能存在大量bug，甚至导致应用崩溃，确定要开启吗？")
@@ -136,9 +138,11 @@ class SettingsFragment : BaseFragment(R.xml.preference_settings) {
                     .setNegativeButton("还没") { _, _ ->
                         useExperimentalFeature.isChecked = false
                         experimentalFeatures.isVisible = false
+                        useNewUi.isChecked = false
                     }.create().show()
             } else {
                 makeRestartAppSnackbar()
+                useNewUi.isChecked = false
             }
             true
         }
@@ -159,7 +163,8 @@ class SettingsFragment : BaseFragment(R.xml.preference_settings) {
 
     private fun shutdownApp(v: View) {
         this@SettingsFragment.logger.info("用户要求应用自杀，并稍后手动重启")
-        Runtime.getRuntime().exit(0)
+        requireActivity().finishAffinity()
+        exitProcess(0)
     }
 
     override fun addObservers() {
@@ -233,7 +238,7 @@ class SettingsFragment : BaseFragment(R.xml.preference_settings) {
         labels.add("不选择")
 
         pm.getInstalledApplications(0).filter {
-            if (app.sharedPreferences.get(res, R.string.showAllApps, false)) {
+            if (app.sharedPreferences.get(PreferenceKeys.SWITCH_SHOW_ALL_APPS, false)) {
                 pm.getLaunchIntentForPackage(it.packageName) != null
             } else {
                 val label = it.loadLabel(pm)
