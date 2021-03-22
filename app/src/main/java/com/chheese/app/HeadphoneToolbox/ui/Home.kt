@@ -2,7 +2,6 @@ package com.chheese.app.HeadphoneToolbox.ui
 
 import android.content.Intent
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.GridCells
@@ -21,6 +20,7 @@ import com.chheese.app.HeadphoneToolbox.activity.MainActivity
 import com.chheese.app.HeadphoneToolbox.activity.SettingsActivity
 import com.chheese.app.HeadphoneToolbox.data.SharedAppData
 import com.chheese.app.HeadphoneToolbox.data.ToolboxViewModel
+import com.chheese.app.HeadphoneToolbox.util.PreferenceKeys
 import com.chheese.app.HeadphoneToolbox.util.isIgnoringBatteryOptimizations
 
 @ExperimentalFoundationApi
@@ -41,17 +41,17 @@ fun Home(
                     iconId = R.drawable.ic_light_screen_on,
                     title = "点亮屏幕",
                     modifier = Modifier
-                        .padding(16.dp, 16.dp, 8.dp, 8.dp)
-                        .clickable {
-                            SharedAppData.lightScreen.value = !SharedAppData.lightScreen.value!!
-                            if (SharedAppData.lightScreen.value!! && mainActivity != null) {
-                                if (!mainActivity.isIgnoringBatteryOptimizations()) {
-                                    mainActivity.requestIgnoreBatteryOptimizations()
-                                }
-                            }
-                        },
+                        .padding(16.dp, 16.dp, 8.dp, 8.dp),
                     viewModel = viewModel,
-                    isActive = viewModel.lightScreen.value
+                    isActive = viewModel.lightScreen.value,
+                    onClick = {
+                        SharedAppData.lightScreen.value = !SharedAppData.lightScreen.value!!
+                        if (SharedAppData.lightScreen.value!! && mainActivity != null) {
+                            if (!mainActivity.isIgnoringBatteryOptimizations()) {
+                                mainActivity.requestIgnoreBatteryOptimizations()
+                            }
+                        }
+                    }
                 )
             }
             item {
@@ -59,17 +59,30 @@ fun Home(
                     iconId = R.drawable.ic_open_player,
                     title = "打开播放器",
                     modifier = Modifier
-                        .padding(8.dp, 16.dp, 16.dp, 8.dp)
-                        .clickable {
-                            SharedAppData.openPlayer.value = !SharedAppData.openPlayer.value!!
-                            if (SharedAppData.openPlayer.value!! && mainActivity != null) {
-                                if (!mainActivity.isIgnoringBatteryOptimizations()) {
-                                    mainActivity.requestIgnoreBatteryOptimizations()
-                                }
-                            }
-                        },
+                        .padding(8.dp, 16.dp, 16.dp, 8.dp),
                     viewModel = viewModel,
-                    isActive = viewModel.openPlayer.value
+                    isActive = viewModel.openPlayer.value,
+                    onClick = {
+                        SharedAppData.openPlayer.value = !SharedAppData.openPlayer.value!!
+                        if (SharedAppData.openPlayer.value!! && mainActivity != null) {
+                            if (!mainActivity.isIgnoringBatteryOptimizations()) {
+                                mainActivity.requestIgnoreBatteryOptimizations()
+                            }
+                        }
+                    },
+                    showSettings = viewModel.openPlayer.value,
+                    onSettingsClick = {
+                        val intent = Intent(mainActivity, SettingsActivity::class.java)
+                        intent.putExtra(
+                            "invisibleKeys", arrayOf(
+                                PreferenceKeys.CATEGORY_EXPERIMENTAL_FEATURES,
+                                PreferenceKeys.CATEGORY_ABOUT,
+                                PreferenceKeys.CATEGORY_DEVELOPERS,
+                                PreferenceKeys.CATEGORY_OTHER,
+                            )
+                        )
+                        mainActivity?.startActivity(intent)
+                    }
                 )
             }
             item {
@@ -79,25 +92,45 @@ fun Home(
                     isActive = false,
                     viewModel = viewModel,
                     modifier = Modifier
-                        .padding(16.dp, 8.dp, 8.dp, 8.dp)
-                        .clickable {
-                            mainActivity?.showChannelTestDialog()
-                        }
+                        .padding(16.dp, 8.dp, 8.dp, 8.dp),
+                    onClick = {
+                        mainActivity?.showChannelTestDialog()
+                    },
+                    showSettings = true,
+                    onSettingsClick = {
+                        val intent = Intent(mainActivity, SettingsActivity::class.java)
+                        intent.putExtra(
+                            "invisibleKeys", arrayOf(
+                                PreferenceKeys.CATEGORY_EXPERIMENTAL_FEATURES,
+                                PreferenceKeys.CATEGORY_PLAYER_SETTINGS,
+                                PreferenceKeys.CATEGORY_ABOUT,
+                                PreferenceKeys.CATEGORY_DEVELOPERS,
+                                PreferenceKeys.SWITCH_ALLOW_BLUETOOTH
+                            )
+                        )
+                        mainActivity?.startActivity(intent)
+                    }
                 )
             }
             item {
                 FeatureToggleCard(
                     isActive = false,
-                    title = "设置",
+                    title = "其它偏好设置",
                     imageVector = Icons.Filled.Settings,
                     viewModel = viewModel,
                     modifier = Modifier
-                        .padding(8.dp, 8.dp, 16.dp, 8.dp)
-                        .clickable {
-                            mainActivity?.startActivity(
-                                Intent(mainActivity, SettingsActivity::class.java)
+                        .padding(8.dp, 8.dp, 16.dp, 8.dp),
+                    onClick = {
+                        val intent = Intent(mainActivity, SettingsActivity::class.java)
+                        intent.putExtra(
+                            "invisibleKeys", arrayOf(
+                                PreferenceKeys.SWITCH_ALLOW_PARALLEL,
+                                PreferenceKeys.CATEGORY_PLAYER_SETTINGS
                             )
-                        }
+                        )
+                        mainActivity?.startActivity(intent)
+                    },
+                    showSettings = false
                 )
             }
         }

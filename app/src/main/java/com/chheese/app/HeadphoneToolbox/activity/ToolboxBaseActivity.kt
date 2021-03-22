@@ -66,9 +66,10 @@ abstract class ToolboxBaseActivity : BaseActivity() {
             .setMessage("你拒绝了权限请求，是手滑了吗？")
             .setPositiveButton("是，再来一次") { _, _ ->
                 requestIgnoreBatteryOptimizations()
-            }.setNegativeButton("没有，我反悔了") { _, _ ->
+            }.setNegativeButton("不，我反悔了") { _, _ ->
                 onBatteryPermissionGrantFailed()
             }
+            .setCancelable(false)
             .create().show()
     }
 

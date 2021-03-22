@@ -1,8 +1,6 @@
 package com.chheese.app.HeadphoneToolbox.util
 
 import android.content.SharedPreferences
-import android.content.res.Resources
-import androidx.annotation.StringRes
 
 @Suppress("UNCHECKED_CAST")
 fun <T> SharedPreferences.get(pref: String, defaultValue: T): T {
@@ -17,8 +15,11 @@ fun SharedPreferences.edit(block: SharedPreferences.Editor.() -> Unit) {
 }
 
 object PreferenceKeys {
+    const val CATEGORY_OTHER = "category_other"
     const val CATEGORY_PLAYER_SETTINGS = "player_settings"
     const val CATEGORY_EXPERIMENTAL_FEATURES = "experimental_features"
+    const val CATEGORY_ABOUT = "category_about"
+    const val CATEGORY_DEVELOPERS = "category_developers"
 
     const val PREF_SELECT_PLAYER = "select_player"
     const val PREF_VIEW_LOG = "view_log"

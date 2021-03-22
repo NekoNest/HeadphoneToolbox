@@ -20,7 +20,8 @@ import com.chheese.app.HeadphoneToolbox.util.logger
 import com.google.android.material.snackbar.Snackbar
 import kotlin.system.exitProcess
 
-class SettingsFragment : BaseFragment(R.xml.preference_settings) {
+class SettingsFragment(private val inVisibleKeys: Array<String> = arrayOf()) :
+    BaseFragment(R.xml.preference_settings) {
     private lateinit var playerSettings: PreferenceCategory
     private lateinit var alertOnOpen: SwitchPreference
     private lateinit var selectPlayer: Preference
@@ -153,6 +154,10 @@ class SettingsFragment : BaseFragment(R.xml.preference_settings) {
         }
 
         aboutAuthor.setOnPreferenceClickListener(this::onAboutAuthorClick)
+
+        for (key in inVisibleKeys) {
+            findPreference<Preference>(key)!!.isVisible = false
+        }
     }
 
     private fun makeRestartAppSnackbar() {

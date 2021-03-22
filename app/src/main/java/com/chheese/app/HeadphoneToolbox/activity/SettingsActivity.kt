@@ -14,8 +14,10 @@ class SettingsActivity : BaseActivity() {
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
 
+        val invisibleKeys = intent.getStringArrayExtra("invisibleKeys") ?: arrayOf()
+
         supportFragmentManager.beginTransaction()
-            .add(R.id.fragment_container, SettingsFragment())
+            .add(R.id.fragment_container, SettingsFragment(invisibleKeys))
             .commit()
 
         supportActionBar?.apply {
