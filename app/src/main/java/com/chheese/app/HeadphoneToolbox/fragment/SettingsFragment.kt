@@ -12,6 +12,7 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.SwitchPreference
 import com.chheese.app.HeadphoneToolbox.R
 import com.chheese.app.HeadphoneToolbox.activity.LogListActivity
+import com.chheese.app.HeadphoneToolbox.activity.UiSettingsActivity
 import com.chheese.app.HeadphoneToolbox.data.SharedAppData
 import com.chheese.app.HeadphoneToolbox.util.PreferenceKeys
 import com.chheese.app.HeadphoneToolbox.util.edit
@@ -33,6 +34,7 @@ class SettingsFragment(private val inVisibleKeys: Array<String> = arrayOf()) :
     private lateinit var useExperimentalFeature: SwitchPreference
     private lateinit var experimentalFeatures: PreferenceCategory
     private lateinit var useNewUi: SwitchPreference
+    private lateinit var newUiSettings: Preference
     private lateinit var aboutAuthor: Preference
 
     init {
@@ -58,6 +60,7 @@ class SettingsFragment(private val inVisibleKeys: Array<String> = arrayOf()) :
         useExperimentalFeature = findPreference(PreferenceKeys.SWITCH_USE_EXPERIMENTAL_FEATURE)!!
         experimentalFeatures = findPreference(PreferenceKeys.CATEGORY_EXPERIMENTAL_FEATURES)!!
         useNewUi = findPreference(PreferenceKeys.SWITCH_USE_NEW_UI)!!
+        newUiSettings = findPreference(PreferenceKeys.PREF_NEW_UI_SETTINGS)!!
         aboutAuthor = findPreference(PreferenceKeys.PREF_ABOUT_AUTHOR)!!
 
         playerSettings.isVisible = app.sharedPreferences
@@ -133,9 +136,7 @@ class SettingsFragment(private val inVisibleKeys: Array<String> = arrayOf()) :
                     .setTitle("二次确认")
                     .setMessage("实验版特性一般处于开发阶段，可能存在大量bug，甚至导致应用崩溃，确定要开启吗？")
                     .setCancelable(false)
-                    .setPositiveButton("确定") { _, _ ->
-                        makeRestartAppSnackbar()
-                    }
+                    .setPositiveButton("确定") { _, _ -> }
                     .setNegativeButton("还没") { _, _ ->
                         useExperimentalFeature.isChecked = false
                         experimentalFeatures.isVisible = false
@@ -149,7 +150,15 @@ class SettingsFragment(private val inVisibleKeys: Array<String> = arrayOf()) :
         }
 
         useNewUi.setOnPreferenceClickListener {
+            (it as SwitchPreference).apply {
+                newUiSettings.isVisible = isChecked
+            }
             makeRestartAppSnackbar()
+            true
+        }
+
+        newUiSettings.setOnPreferenceClickListener {
+            startActivity(Intent(requireContext(), UiSettingsActivity::class.java))
             true
         }
 
@@ -279,7 +288,6 @@ class SettingsFragment(private val inVisibleKeys: Array<String> = arrayOf()) :
     override fun handleMessage(message: Message) = true
 
     companion object {
-        const val FLAG_IGNORE_BATTERY_OPTIMIZATIONS = 0xf001
         const val REQUEST_ALERT_PERMISSION = 0xf05
     }
 }

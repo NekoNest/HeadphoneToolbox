@@ -72,6 +72,43 @@ class HeadphoneToolbox : Application(), LifecycleOwner, Application.ActivityLife
                 putBoolean(PreferenceKeys.SWITCH_OPEN_PLAYER, it)
             }
         }
+
+        SharedAppData.topStartCornerSize.value =
+            sharedPreferences.getInt(PreferenceKeys.INT_CORNER_SIZE_TOP_START, 4)
+        SharedAppData.topEndCornerSize.value =
+            sharedPreferences.getInt(PreferenceKeys.INT_CORNER_SIZE_TOP_END, 4)
+        SharedAppData.bottomStartCornerSize.value =
+            sharedPreferences.getInt(PreferenceKeys.INT_CORNER_SIZE_BOTTOM_START, 4)
+        SharedAppData.bottomEndCornerSize.value =
+            sharedPreferences.getInt(PreferenceKeys.INT_CORNER_SIZE_BOTTOM_END, 4)
+        SharedAppData.shapeType.value = sharedPreferences
+            .getString(PreferenceKeys.STRING_CORNER_TYPE, "round")
+
+        SharedAppData.topStartCornerSize.observe(this) {
+            sharedPreferences.edit {
+                putInt(PreferenceKeys.INT_CORNER_SIZE_TOP_START, it)
+            }
+        }
+        SharedAppData.topEndCornerSize.observe(this) {
+            sharedPreferences.edit {
+                putInt(PreferenceKeys.INT_CORNER_SIZE_TOP_END, it)
+            }
+        }
+        SharedAppData.bottomStartCornerSize.observe(this) {
+            sharedPreferences.edit {
+                putInt(PreferenceKeys.INT_CORNER_SIZE_BOTTOM_START, it)
+            }
+        }
+        SharedAppData.bottomEndCornerSize.observe(this) {
+            sharedPreferences.edit {
+                putInt(PreferenceKeys.INT_CORNER_SIZE_BOTTOM_END, it)
+            }
+        }
+        SharedAppData.shapeType.observe(this) {
+            sharedPreferences.edit {
+                putString(PreferenceKeys.STRING_CORNER_TYPE, it)
+            }
+        }
     }
 
     private fun checkFeatureStatus() {

@@ -2,14 +2,22 @@ package com.chheese.app.HeadphoneToolbox.activity
 
 import android.graphics.Color
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.unit.dp
 import com.chheese.app.HeadphoneToolbox.HeadphoneToolbox
 import com.chheese.app.HeadphoneToolbox.R
+import com.chheese.app.HeadphoneToolbox.data.SharedAppData
+import com.chheese.app.HeadphoneToolbox.data.ToolboxViewModel
+import com.chheese.app.HeadphoneToolbox.ui.ShapeCornerSize
+import com.chheese.app.HeadphoneToolbox.ui.ShapeType
+import com.chheese.app.HeadphoneToolbox.ui.shape
 import com.chheese.app.HeadphoneToolbox.util.logger
 import com.gyf.immersionbar.ktx.immersionBar
 
 abstract class BaseActivity : AppCompatActivity() {
     protected lateinit var app: HeadphoneToolbox
+    protected val viewModel: ToolboxViewModel by viewModels()
     protected var darkMode = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +38,85 @@ abstract class BaseActivity : AppCompatActivity() {
                 darkMode = false
             }
             fitsSystemWindows(true)
+        }
+
+        SharedAppData.topStartCornerSize.observe(this) {
+            viewModel.topStartCornerSize.value = it
+            SharedAppData.apply {
+                shapeCornerSize.value = ShapeCornerSize(
+                    topStartCornerSize.value!!.dp,
+                    topEndCornerSize.value!!.dp,
+                    bottomStartCornerSize.value!!.dp,
+                    bottomEndCornerSize.value!!.dp
+                )
+            }
+        }
+        SharedAppData.topEndCornerSize.observe(this) {
+            viewModel.topEndCornerSize.value = it
+            SharedAppData.apply {
+                shapeCornerSize.value = ShapeCornerSize(
+                    topStartCornerSize.value!!.dp,
+                    topEndCornerSize.value!!.dp,
+                    bottomStartCornerSize.value!!.dp,
+                    bottomEndCornerSize.value!!.dp
+                )
+            }
+        }
+        SharedAppData.bottomStartCornerSize.observe(this) {
+            viewModel.bottomStartCornerSize.value = it
+            SharedAppData.apply {
+                shapeCornerSize.value = ShapeCornerSize(
+                    topStartCornerSize.value!!.dp,
+                    topEndCornerSize.value!!.dp,
+                    bottomStartCornerSize.value!!.dp,
+                    bottomEndCornerSize.value!!.dp
+                )
+            }
+        }
+        SharedAppData.bottomEndCornerSize.observe(this) {
+            viewModel.bottomEndCornerSize.value = it
+            SharedAppData.apply {
+                shapeCornerSize.value = ShapeCornerSize(
+                    topStartCornerSize.value!!.dp,
+                    topEndCornerSize.value!!.dp,
+                    bottomStartCornerSize.value!!.dp,
+                    bottomEndCornerSize.value!!.dp
+                )
+            }
+        }
+        SharedAppData.shapeCornerSize.observe(this) {
+            viewModel.shapeCornerSize.value = it
+            SharedAppData.apply {
+                shape.value = shape(
+                    when (shapeType.value!!) {
+                        "round" -> ShapeType.ROUNDED
+                        "cut" -> ShapeType.CUT
+                        "none" -> ShapeType.NONE
+                        else -> error("没有这种边角类型")
+                    }, shapeCornerSize.value!!
+                )
+            }
+        }
+        SharedAppData.shapeType.observe(this) {
+            viewModel.shapeType.value = when (it) {
+                "round" -> ShapeType.ROUNDED
+                "cut" -> ShapeType.CUT
+                "none" -> ShapeType.NONE
+                else -> error("没有这种边角类型")
+            }
+            SharedAppData.apply {
+                shape.value = shape(
+                    when (shapeType.value!!) {
+                        "round" -> ShapeType.ROUNDED
+                        "cut" -> ShapeType.CUT
+                        "none" -> ShapeType.NONE
+                        else -> error("没有这种边角类型")
+                    }, shapeCornerSize.value!!
+                )
+            }
+        }
+        SharedAppData.shape.observe(this) {
+            viewModel.shape.value = it
         }
     }
 

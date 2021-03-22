@@ -27,6 +27,15 @@ object PreferenceKeys {
     const val PREF_OPEN_IN_COOLAPK = "open_in_coolapk"
     const val PREF_ABOUT = "about"
     const val PREF_ABOUT_AUTHOR = "about_author"
+    const val PREF_NEW_UI_SETTINGS = "new_ui_settings"
+
+    const val INT_CORNER_SIZE_TOP_START = "corner_size_top_start"
+    const val INT_CORNER_SIZE_TOP_END = "corner_size_top_end"
+    const val INT_CORNER_SIZE_BOTTOM_START = "corner_size_bottom_start"
+    const val INT_CORNER_SIZE_BOTTOM_END = "corner_size_bottom_end"
+
+    const val STRING_CORNER_TYPE = "corner_type"
+    const val STRING_THEME_COLOR_PRIMARY = "theme_color_primary"
 
     const val SWITCH_LIGHT_SCREEN = "light_screen"
     const val SWITCH_ALERT_ON_OPEN = "alert_on_open"

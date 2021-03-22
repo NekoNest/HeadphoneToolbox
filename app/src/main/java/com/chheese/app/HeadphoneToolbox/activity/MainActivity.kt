@@ -5,11 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.ExperimentalFoundationApi
 import com.chheese.app.HeadphoneToolbox.R
 import com.chheese.app.HeadphoneToolbox.data.SharedAppData
-import com.chheese.app.HeadphoneToolbox.data.ToolboxViewModel
 import com.chheese.app.HeadphoneToolbox.ui.Home
 import com.chheese.app.HeadphoneToolbox.ui.theme.ToolboxTheme
 import com.chheese.app.HeadphoneToolbox.util.logger
@@ -18,8 +16,6 @@ import com.chheese.app.HeadphoneToolbox.util.setTo
 import com.google.android.material.button.MaterialButton
 
 class MainActivity : ToolboxBaseActivity() {
-    private val viewModel: ToolboxViewModel by viewModels()
-
     @ExperimentalFoundationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

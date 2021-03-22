@@ -13,6 +13,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Screenshot
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,6 +23,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.chheese.app.HeadphoneToolbox.data.ToolboxViewModel
@@ -68,6 +70,7 @@ fun FeatureToggleCard(
         shape = viewModel.shape.value
     ) {
         Box {
+            // 将图标包裹起来，让图标的可点击范围不那么小
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
@@ -129,6 +132,9 @@ fun FeatureToggleCard(
     }
 }
 
+/**
+ * 边角半径，依次是 左上角，右上角，左下角和右下角
+ */
 data class ShapeCornerSize(
     val topStart: Dp,
     val topEnd: Dp,
@@ -136,12 +142,29 @@ data class ShapeCornerSize(
     val bottomEnd: Dp
 )
 
+/**
+ * 形状类型
+ */
 enum class ShapeType {
+    /**
+     * 没有形状，卡片和按钮等的边角将显示为直角
+     */
     NONE,
+
+    /**
+     * 圆形边角，需要设置半径
+     */
     ROUNDED,
+
+    /**
+     * 像钻石切边一样的边角，需要设置半径
+     */
     CUT
 }
 
+/**
+ * 创建形状，用于卡片，按钮等
+ */
 fun shape(type: ShapeType, shapeCornerSize: ShapeCornerSize): Shape {
     val (topStart, topEnd, bottomStart, bottomEnd) = shapeCornerSize
     return when (type) {
@@ -149,4 +172,16 @@ fun shape(type: ShapeType, shapeCornerSize: ShapeCornerSize): Shape {
         ShapeType.CUT -> CutCornerShape(topStart, topEnd, bottomEnd, bottomStart)
         ShapeType.ROUNDED -> RoundedCornerShape(topStart, topEnd, bottomEnd, bottomStart)
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun FeatureToggleCardPreview() {
+    FeatureToggleCard(
+        imageVector = Icons.Filled.Screenshot,
+        isActive = false,
+        title = "屏幕截图",
+        viewModel = ToolboxViewModel(),
+        showSettings = true
+    )
 }

@@ -18,6 +18,21 @@ class ToolboxViewModel : ViewModel() {
     val theme = mutableStateOf(ToolboxTheme.light)
 
     val shapeType = mutableStateOf(ShapeType.ROUNDED) // cut, none
-    val shapeCornerSize = mutableStateOf(ShapeCornerSize(4.dp, 4.dp, 4.dp, 4.dp))
+
+    val previewActive = mutableStateOf(false)
+
+    val topStartCornerSize = mutableStateOf(0)
+    val topEndCornerSize = mutableStateOf(0)
+    val bottomStartCornerSize = mutableStateOf(0)
+    val bottomEndCornerSize = mutableStateOf(0)
+
+    val shapeCornerSize = mutableStateOf(
+        ShapeCornerSize(
+            topStartCornerSize.value.dp,
+            topEndCornerSize.value.dp,
+            bottomStartCornerSize.value.dp,
+            bottomEndCornerSize.value.dp
+        )
+    )
     val shape: MutableState<Shape> = mutableStateOf(shape(shapeType.value, shapeCornerSize.value))
 }

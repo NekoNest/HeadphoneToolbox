@@ -58,6 +58,10 @@
             android:key="use_new_ui"
             android:summary="基于Jetpack Compose打造"
             android:title="使用新版用户界面" />
+        <Preference
+            android:key="new_ui_settings"
+            android:summary="可进行预览"
+            android:title="对新版用户界面进行自定义" />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="category_about"
