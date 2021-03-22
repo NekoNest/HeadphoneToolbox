@@ -10,7 +10,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import com.chheese.app.HeadphoneToolbox.R
 import com.chheese.app.HeadphoneToolbox.data.SharedAppData
 import com.chheese.app.HeadphoneToolbox.data.ToolboxViewModel
-import com.chheese.app.HeadphoneToolbox.fragment.SettingsFragment
 import com.chheese.app.HeadphoneToolbox.ui.Home
 import com.chheese.app.HeadphoneToolbox.ui.theme.ToolboxTheme
 import com.chheese.app.HeadphoneToolbox.util.logger
@@ -57,17 +56,14 @@ class MainActivity : ToolboxBaseActivity() {
         SharedAppData.lightScreen setTo false
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == SettingsFragment.FLAG_IGNORE_BATTERY_OPTIMIZATIONS) {
-            when (resultCode) {
-                0 -> {
-                    logger.info("用户拒绝了请求")
-                    onIgnoreBatteryOptimizationActivityReject()
-                }
-                -1 -> {
-                    logger.info("用户同意了请求")
-                }
+    override fun onActivityResult(resultCode: Int, data: Intent?) {
+        when (resultCode) {
+            0 -> {
+                logger.info("用户拒绝了请求")
+                onIgnoreBatteryOptimizationActivityReject()
+            }
+            -1 -> {
+                logger.info("用户同意了请求")
             }
         }
     }

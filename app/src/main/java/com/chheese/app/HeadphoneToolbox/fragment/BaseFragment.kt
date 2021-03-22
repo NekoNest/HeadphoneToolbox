@@ -7,6 +7,8 @@ import android.content.res.Resources
 import android.net.Uri
 import android.os.*
 import android.provider.Settings
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.annotation.XmlRes
 import androidx.preference.PreferenceFragmentCompat
@@ -21,7 +23,16 @@ abstract class BaseFragment(@XmlRes private val resId: Int) :
     protected lateinit var res: Resources
     protected var messageCallback: ((Int) -> Unit)? = null
 
-    var handler = Handler(Looper.getMainLooper(), this::handleMessage)
+    internal var handler = Handler(Looper.getMainLooper(), this::handleMessage)
+    protected lateinit var startActivityForResult: ActivityResultLauncher<Intent>
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        startActivityForResult =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                onActivityResult(it.resultCode, it.data)
+            }
+        super.onCreate(savedInstanceState)
+    }
 
     protected open fun handleMessage(message: Message): Boolean {
         if (message.what == REQUEST_IGNORE_BATTERY_OPTIMIZATION_FAILED) {
@@ -69,19 +80,17 @@ abstract class BaseFragment(@XmlRes private val resId: Int) :
         if (isIgnored) return
         val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
         intent.data = Uri.fromParts("package", app.packageName, null)
-        startActivityForResult(intent, SettingsFragment.FLAG_IGNORE_BATTERY_OPTIMIZATIONS)
+        startActivityForResult.launch(intent)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == SettingsFragment.FLAG_IGNORE_BATTERY_OPTIMIZATIONS) {
-            when (resultCode) {
-                0 -> {
-                    logger.info("用户拒绝了请求")
-                    (requireActivity() as ToolboxActivity).onIgnoreBatteryOptimizationActivityReject()
-                }
-                -1 -> {
-                    logger.info("用户同意了请求")
-                }
+    private fun onActivityResult(resultCode: Int, data: Intent?) {
+        when (resultCode) {
+            0 -> {
+                logger.info("用户拒绝了请求")
+                (requireActivity() as ToolboxActivity).onIgnoreBatteryOptimizationActivityReject()
+            }
+            -1 -> {
+                logger.info("用户同意了请求")
             }
         }
     }

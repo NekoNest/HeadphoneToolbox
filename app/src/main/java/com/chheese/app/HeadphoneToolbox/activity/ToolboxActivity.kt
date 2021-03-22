@@ -116,17 +116,14 @@ class ToolboxActivity : ToolboxBaseActivity() {
         super.onStop()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == SettingsFragment.FLAG_IGNORE_BATTERY_OPTIMIZATIONS) {
-            when (resultCode) {
-                0 -> {
-                    logger.info("用户拒绝了请求")
-                    mainFragment.handler.sendMessage(newMessage(BaseFragment.REQUEST_IGNORE_BATTERY_OPTIMIZATION_FAILED))
-                }
-                -1 -> {
-                    logger.info("用户同意了请求")
-                }
+    override fun onActivityResult(resultCode: Int, data: Intent?) {
+        when (resultCode) {
+            0 -> {
+                logger.info("用户拒绝了请求")
+                mainFragment.handler.sendMessage(newMessage(BaseFragment.REQUEST_IGNORE_BATTERY_OPTIMIZATION_FAILED))
+            }
+            -1 -> {
+                logger.info("用户同意了请求")
             }
         }
     }
