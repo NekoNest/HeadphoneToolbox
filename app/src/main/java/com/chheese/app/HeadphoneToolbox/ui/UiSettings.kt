@@ -3,20 +3,19 @@ package com.chheese.app.HeadphoneToolbox.ui
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Divider
-import androidx.compose.material.RadioButton
-import androidx.compose.material.Slider
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Screenshot
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.chheese.app.HeadphoneToolbox.activity.UiSettingsActivity
 import com.chheese.app.HeadphoneToolbox.data.SharedAppData
 import com.chheese.app.HeadphoneToolbox.data.ToolboxViewModel
+import java.util.*
 
 @Composable
 fun UiSettings(
@@ -111,6 +110,33 @@ fun UiSettings(
                 SharedAppData.bottomEndCornerSize.value = it.toInt()
             },
         )
+        OutlinedTextField(
+            value = viewModel.colorTextFieldValue.value,
+            onValueChange = {
+                viewModel.colorTextFieldValue.value = it
+                val regex = "#[0-9a-fA-F]{6}".toRegex()
+                if (it.matches(regex)) {
+                    SharedAppData.colorPrimary.value = (
+                            it.substring(1)).toUpperCase(Locale.ROOT)
+                    viewModel.colorTextFieldError.value = false
+                } else {
+                    viewModel.colorTextFieldError.value = true
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            label = {
+                Text(
+                    text = if (viewModel.colorTextFieldError.value) {
+                        "主色调十六进制颜色值（格式错误）"
+                    } else {
+                        "主色调十六进制颜色值"
+                    }
+                )
+            },
+            isError = viewModel.colorTextFieldError.value
+        )
     }
 }
 
@@ -186,13 +212,17 @@ private fun RadioGroupInternal(
                 selected = option == selected,
                 onClick = {
                     onValueChange(option)
-                }
-            )
+                })
             Text(
                 text = option
             )
         }
     }
+}
+
+fun Color(colorStr: String): Color {
+    val color = Color(colorStr.toInt(16))
+    return Color(color.red, color.green, color.blue)
 }
 
 @Preview(showBackground = true)

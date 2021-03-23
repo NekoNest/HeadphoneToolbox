@@ -19,6 +19,8 @@ object SharedAppData {
     val bottomStartCornerSize = MutableLiveData(0)
     val bottomEndCornerSize = MutableLiveData(0)
 
+    val colorPrimary = MutableLiveData("0xFF6200EE")
+
     val shapeCornerSize = MutableLiveData(
         ShapeCornerSize(
             topStartCornerSize.value!!.dp,

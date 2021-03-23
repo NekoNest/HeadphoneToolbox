@@ -1,18 +1,20 @@
 package com.chheese.app.HeadphoneToolbox.activity
 
-import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material.darkColors
+import androidx.compose.material.lightColors
 import androidx.compose.ui.unit.dp
 import com.chheese.app.HeadphoneToolbox.HeadphoneToolbox
 import com.chheese.app.HeadphoneToolbox.R
 import com.chheese.app.HeadphoneToolbox.data.SharedAppData
 import com.chheese.app.HeadphoneToolbox.data.ToolboxViewModel
+import com.chheese.app.HeadphoneToolbox.ui.Color
 import com.chheese.app.HeadphoneToolbox.ui.ShapeCornerSize
 import com.chheese.app.HeadphoneToolbox.ui.ShapeType
 import com.chheese.app.HeadphoneToolbox.ui.shape
-import com.chheese.app.HeadphoneToolbox.util.logger
+import com.chheese.app.HeadphoneToolbox.util.*
 import com.gyf.immersionbar.ktx.immersionBar
 
 abstract class BaseActivity : AppCompatActivity() {
@@ -26,7 +28,7 @@ abstract class BaseActivity : AppCompatActivity() {
             transparentStatusBar()
             navigationBarColor(R.color.navigationBarBackground)
             // 判断是否处于深色模式
-            if (resources.getColor(R.color.colorPrimary, theme) == Color.parseColor("#78A2F5")) {
+            if (resources.getColor(R.color.colorPrimary, theme) == 0x78A2F5) {
                 this@BaseActivity.logger.info("用户正使用深色模式")
                 navigationBarDarkIcon(false)
                 statusBarDarkFont(false)
@@ -117,6 +119,22 @@ abstract class BaseActivity : AppCompatActivity() {
         }
         SharedAppData.shape.observe(this) {
             viewModel.shape.value = it
+        }
+
+        SharedAppData.colorPrimary.observe(this) {
+            val isLight = viewModel.theme.value.isLight
+            if (isLight) {
+                viewModel.theme.value = lightColors(
+                    primary = Color(it),
+                    secondary = Color(it)
+                )
+            } else {
+                viewModel.theme.value = darkColors(
+                    primary = Color(it),
+                    secondary = Color(it)
+                )
+            }
+            viewModel.colorTextFieldValue.value = "#$it"
         }
     }
 

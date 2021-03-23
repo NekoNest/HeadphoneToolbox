@@ -7,8 +7,6 @@ import android.content.res.Resources
 import android.net.Uri
 import android.os.*
 import android.provider.Settings
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.annotation.XmlRes
 import androidx.preference.PreferenceFragmentCompat
@@ -24,15 +22,6 @@ abstract class BaseFragment(@XmlRes private val resId: Int) :
     protected var messageCallback: ((Int) -> Unit)? = null
 
     internal var handler = Handler(Looper.getMainLooper(), this::handleMessage)
-    protected lateinit var startActivityForResult: ActivityResultLauncher<Intent>
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        startActivityForResult =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                onActivityResult(it.resultCode, it.data)
-            }
-        super.onCreate(savedInstanceState)
-    }
 
     protected open fun handleMessage(message: Message): Boolean {
         if (message.what == REQUEST_IGNORE_BATTERY_OPTIMIZATION_FAILED) {
@@ -80,10 +69,10 @@ abstract class BaseFragment(@XmlRes private val resId: Int) :
         if (isIgnored) return
         val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
         intent.data = Uri.fromParts("package", app.packageName, null)
-        startActivityForResult.launch(intent)
+        startActivityForResult(intent, 1)
     }
 
-    private fun onActivityResult(resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (resultCode) {
             0 -> {
                 logger.info("用户拒绝了请求")

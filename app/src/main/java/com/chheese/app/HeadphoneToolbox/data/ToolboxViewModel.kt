@@ -26,6 +26,9 @@ class ToolboxViewModel : ViewModel() {
     val bottomStartCornerSize = mutableStateOf(0)
     val bottomEndCornerSize = mutableStateOf(0)
 
+    val colorTextFieldValue = mutableStateOf("#000000")
+    val colorTextFieldError = mutableStateOf(false)
+
     val shapeCornerSize = mutableStateOf(
         ShapeCornerSize(
             topStartCornerSize.value.dp,

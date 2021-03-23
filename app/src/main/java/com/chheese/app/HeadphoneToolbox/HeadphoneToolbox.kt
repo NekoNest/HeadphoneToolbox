@@ -84,6 +84,9 @@ class HeadphoneToolbox : Application(), LifecycleOwner, Application.ActivityLife
         SharedAppData.shapeType.value = sharedPreferences
             .getString(PreferenceKeys.STRING_CORNER_TYPE, "round")
 
+        SharedAppData.colorPrimary.value = sharedPreferences
+            .getString(PreferenceKeys.STRING_THEME_COLOR_PRIMARY, "6200EE")
+
         SharedAppData.topStartCornerSize.observe(this) {
             sharedPreferences.edit {
                 putInt(PreferenceKeys.INT_CORNER_SIZE_TOP_START, it)
@@ -107,6 +110,11 @@ class HeadphoneToolbox : Application(), LifecycleOwner, Application.ActivityLife
         SharedAppData.shapeType.observe(this) {
             sharedPreferences.edit {
                 putString(PreferenceKeys.STRING_CORNER_TYPE, it)
+            }
+        }
+        SharedAppData.colorPrimary.observe(this) {
+            sharedPreferences.edit {
+                putString(PreferenceKeys.STRING_THEME_COLOR_PRIMARY, it)
             }
         }
     }
