@@ -12,7 +12,10 @@ class UiSettingsActivity : BaseActivity() {
         setContent {
             ToolboxTheme(
                 content = {
-                    UiSettings(viewModel = viewModel)
+                    UiSettings(
+                        viewModel = viewModel,
+                        activity = this
+                    )
                 },
                 viewModel = viewModel
             )

@@ -14,17 +14,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.chheese.app.HeadphoneToolbox.activity.UiSettingsActivity
 import com.chheese.app.HeadphoneToolbox.data.SharedAppData
 import com.chheese.app.HeadphoneToolbox.data.ToolboxViewModel
 
 @Composable
 fun UiSettings(
-    viewModel: ToolboxViewModel
+    viewModel: ToolboxViewModel,
+    activity: UiSettingsActivity? = null
 ) {
     Column {
         ToolboxAppBar(
             title = "新版用户界面自定义设置",
-            backgroundColor = viewModel.theme.value.background
+            backgroundColor = viewModel.theme.value.background,
+            showBackIcon = true,
+            onBackClick = {
+                activity?.finish()
+            }
         )
         Divider()
         FeatureToggleCard(
