@@ -28,6 +28,8 @@ object PreferenceKeys {
     const val PREF_ABOUT = "about"
     const val PREF_ABOUT_AUTHOR = "about_author"
     const val PREF_NEW_UI_SETTINGS = "new_ui_settings"
+    const val PREF_CHECK_FOR_UPDATES = "check_for_updates"
+    const val PREF_RESTART_UI = "restart_ui"
 
     const val INT_CORNER_SIZE_TOP_START = "corner_size_top_start"
     const val INT_CORNER_SIZE_TOP_END = "corner_size_top_end"

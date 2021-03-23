@@ -12,14 +12,20 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.SwitchPreference
 import com.chheese.app.HeadphoneToolbox.R
 import com.chheese.app.HeadphoneToolbox.activity.LogListActivity
+import com.chheese.app.HeadphoneToolbox.activity.SplashActivity
 import com.chheese.app.HeadphoneToolbox.activity.UiSettingsActivity
 import com.chheese.app.HeadphoneToolbox.data.SharedAppData
 import com.chheese.app.HeadphoneToolbox.util.PreferenceKeys
 import com.chheese.app.HeadphoneToolbox.util.edit
 import com.chheese.app.HeadphoneToolbox.util.get
 import com.chheese.app.HeadphoneToolbox.util.logger
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
-import kotlin.system.exitProcess
+import kotlinx.coroutines.*
+import org.jsoup.Jsoup
+import java.io.IOException
+import java.net.MalformedURLException
+import java.net.URI
 
 class SettingsFragment(private val inVisibleKeys: Array<String> = arrayOf()) :
     BaseFragment(R.xml.preference_settings) {
@@ -36,6 +42,8 @@ class SettingsFragment(private val inVisibleKeys: Array<String> = arrayOf()) :
     private lateinit var useNewUi: SwitchPreference
     private lateinit var newUiSettings: Preference
     private lateinit var aboutAuthor: Preference
+    private lateinit var checkForUpdates: Preference
+    private lateinit var restartUi: Preference
 
     init {
         messageCallback = {
@@ -48,20 +56,26 @@ class SettingsFragment(private val inVisibleKeys: Array<String> = arrayOf()) :
         }
     }
 
+    override fun <T : Preference?> findPreference(key: CharSequence): T {
+        return super.findPreference(key)!!
+    }
+
     override fun initPreferences() {
-        playerSettings = findPreference(PreferenceKeys.CATEGORY_PLAYER_SETTINGS)!!
-        alertOnOpen = findPreference(PreferenceKeys.SWITCH_ALERT_ON_OPEN)!!
-        selectPlayer = findPreference(PreferenceKeys.PREF_SELECT_PLAYER)!!
-        viewLog = findPreference(PreferenceKeys.PREF_VIEW_LOG)!!
-        openDetails = findPreference(PreferenceKeys.PREF_OPEN_DETAILS)!!
-        openCoolapk = findPreference(PreferenceKeys.PREF_OPEN_IN_COOLAPK)!!
-        about = findPreference(PreferenceKeys.PREF_ABOUT)!!
-        allowParallel = findPreference(PreferenceKeys.SWITCH_ALLOW_PARALLEL)!!
-        useExperimentalFeature = findPreference(PreferenceKeys.SWITCH_USE_EXPERIMENTAL_FEATURE)!!
-        experimentalFeatures = findPreference(PreferenceKeys.CATEGORY_EXPERIMENTAL_FEATURES)!!
-        useNewUi = findPreference(PreferenceKeys.SWITCH_USE_NEW_UI)!!
-        newUiSettings = findPreference(PreferenceKeys.PREF_NEW_UI_SETTINGS)!!
-        aboutAuthor = findPreference(PreferenceKeys.PREF_ABOUT_AUTHOR)!!
+        playerSettings = findPreference(PreferenceKeys.CATEGORY_PLAYER_SETTINGS)
+        alertOnOpen = findPreference(PreferenceKeys.SWITCH_ALERT_ON_OPEN)
+        selectPlayer = findPreference(PreferenceKeys.PREF_SELECT_PLAYER)
+        viewLog = findPreference(PreferenceKeys.PREF_VIEW_LOG)
+        openDetails = findPreference(PreferenceKeys.PREF_OPEN_DETAILS)
+        openCoolapk = findPreference(PreferenceKeys.PREF_OPEN_IN_COOLAPK)
+        about = findPreference(PreferenceKeys.PREF_ABOUT)
+        allowParallel = findPreference(PreferenceKeys.SWITCH_ALLOW_PARALLEL)
+        useExperimentalFeature = findPreference(PreferenceKeys.SWITCH_USE_EXPERIMENTAL_FEATURE)
+        experimentalFeatures = findPreference(PreferenceKeys.CATEGORY_EXPERIMENTAL_FEATURES)
+        useNewUi = findPreference(PreferenceKeys.SWITCH_USE_NEW_UI)
+        newUiSettings = findPreference(PreferenceKeys.PREF_NEW_UI_SETTINGS)
+        aboutAuthor = findPreference(PreferenceKeys.PREF_ABOUT_AUTHOR)
+        checkForUpdates = findPreference(PreferenceKeys.PREF_CHECK_FOR_UPDATES)
+        restartUi = findPreference(PreferenceKeys.PREF_RESTART_UI)
 
         playerSettings.isVisible = app.sharedPreferences
             .getBoolean(PreferenceKeys.SWITCH_OPEN_PLAYER, false)
@@ -98,21 +112,7 @@ class SettingsFragment(private val inVisibleKeys: Array<String> = arrayOf()) :
             true
         }
         openCoolapk.setOnPreferenceClickListener {
-            try {
-                val intent = Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("market://details?id=com.chheese.app.HeadphoneToolbox")
-                )
-                intent.setPackage("com.coolapk.market")
-                startActivity(intent)
-            } catch (e: Exception) {
-                Toast.makeText(app, "并没有安装酷安", Toast.LENGTH_SHORT).show()
-                val intent = Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("https://www.coolapk.com/apk/com.chheese.app.HeadphoneToolbox")
-                )
-                startActivity(intent)
-            }
+            goToCoolapk()
             true
         }
         allowParallel.setOnPreferenceClickListener {
@@ -157,6 +157,7 @@ class SettingsFragment(private val inVisibleKeys: Array<String> = arrayOf()) :
             true
         }
 
+        newUiSettings.isVisible = useNewUi.isChecked
         newUiSettings.setOnPreferenceClickListener {
             startActivity(Intent(requireContext(), UiSettingsActivity::class.java))
             true
@@ -164,21 +165,95 @@ class SettingsFragment(private val inVisibleKeys: Array<String> = arrayOf()) :
 
         aboutAuthor.setOnPreferenceClickListener(this::onAboutAuthorClick)
 
+        checkForUpdates.setOnPreferenceClickListener(this::checkForUpdates)
+
+        restartUi.setOnPreferenceClickListener {
+            restartUi()
+            true
+        }
+
         for (key in inVisibleKeys) {
-            findPreference<Preference>(key)!!.isVisible = false
+            findPreference<Preference>(key).isVisible = false
         }
     }
 
-    private fun makeRestartAppSnackbar() {
-        Snackbar.make(requireContext(), requireView(), "关闭并重启应用后生效", 3000)
-            .setAction("立即关闭", this::shutdownApp)
-            .show()
+    private fun goToCoolapk() {
+        try {
+            val intent = Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("market://details?id=com.chheese.app.HeadphoneToolbox")
+            )
+            intent.setPackage("com.coolapk.market")
+            startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(app, "并没有安装酷安", Toast.LENGTH_SHORT).show()
+            val intent = Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("https://www.coolapk.com/apk/com.chheese.app.HeadphoneToolbox")
+            )
+            startActivity(intent)
+        }
     }
 
-    private fun shutdownApp(v: View) {
-        this@SettingsFragment.logger.info("用户要求应用自杀，并稍后手动重启")
-        requireActivity().finishAffinity()
-        exitProcess(0)
+    @Throws(IOException::class, MalformedURLException::class)
+    private fun checkForUpdates(pref: Preference): Boolean {
+        val snackbar = Snackbar.make(requireView(), "请稍等", 5000)
+        snackbar.show()
+        GlobalScope.launch {
+            withContext(Dispatchers.IO) {
+                val _this = this@SettingsFragment
+                _this.logger.info("开始检查更新")
+                val url = runCatching {
+                    URI.create("https://www.coolapk.com/apk/com.chheese.app.HeadphoneToolbox")
+                        .toURL()
+                }.getOrNull() ?: return@withContext
+
+                val doc = runCatching {
+                    Jsoup.parse(url, 5000)
+                }.getOrNull() ?: return@withContext
+                _this.logger.info("已取到酷安APP详情页面Document")
+
+                val newVersionName = doc.select("span.list_app_info").text()
+                val versionName =
+                    requireActivity().packageManager.getPackageInfo(app.packageName, 0).versionName
+                if (newVersionName != versionName) {
+                    _this.logger.info("发现更新，版本名称：$newVersionName")
+                    snackbar.dismiss()
+                    val newVersionInfoNodes = doc.select(".apk_left_title_info")[1].textNodes()
+                    var newVersionInfo = ""
+                    newVersionInfoNodes.forEach {
+                        newVersionInfo += it.wholeText.trim() + "\n"
+                    }
+                    requireActivity().runOnUiThread {
+                        MaterialAlertDialogBuilder(requireContext())
+                            .setTitle("发现更新 $newVersionName")
+                            .setMessage("新版特性\n$newVersionInfo")
+                            .setPositiveButton("前往酷安") { i, which ->
+                                _this.goToCoolapk()
+                            }
+                            .create()
+                            .show()
+                    }
+                } else {
+                    _this.logger.info("没有发现更新")
+                    Snackbar.make(requireView(), "没有发现更新", 3000).show()
+                }
+            }
+        }
+        return true
+    }
+
+    private fun restartUi(v: View? = null) {
+        val intent = Intent(requireContext(), SplashActivity::class.java)
+        // CLEAR_TASK 必须和 NEW_TASK 同时使用才可起到清空Activity栈的效果
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
+    }
+
+    private fun makeRestartAppSnackbar() {
+        Snackbar.make(requireContext(), requireView(), "关闭并重启用户界面后生效", 3000)
+            .setAction("立即重启", this::restartUi)
+            .show()
     }
 
     override fun addObservers() {

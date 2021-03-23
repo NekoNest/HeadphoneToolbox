@@ -13,8 +13,8 @@ android {
         applicationId = "com.chheese.app.HeadphoneToolbox"
         minSdkVersion(23)
         targetSdkVersion(30)
-        versionCode(26)
-        versionName = "4.2.0_iron"
+        versionCode(27)
+        versionName = "4.2.1_Cobalt"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -46,6 +46,8 @@ dependencies {
     implementation("com.google.android.material:material:1.3.0")
     implementation("com.gyf.immersionbar:immersionbar:3.0.0")
     implementation("com.gyf.immersionbar:immersionbar-ktx:3.0.0")
+    // 用于抓取酷安的网页，分析有没有更新
+    implementation("org.jsoup:jsoup:1.13.1")
 
     // Jetpack Compose
     implementation("androidx.compose.ui:ui:1.0.0-beta02")

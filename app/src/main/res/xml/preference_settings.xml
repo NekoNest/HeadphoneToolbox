@@ -50,6 +50,10 @@
             android:key="@string/viewLog"
             android:summary="此处为开发者选项"
             android:title="查看日志" />
+        <Preference
+            android:key="restart_ui"
+            android:summary="点击可手动重启用户界面"
+            android:title="重启用户界面" />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="experimental_features"
@@ -79,6 +83,10 @@
             android:key="@string/about"
             android:summary="版本号：4.0.2_milk_tea"
             android:title="关于耳机工具箱" />
+        <Preference
+            android:key="check_for_updates"
+            android:summary="以后要上架更多商店了呢"
+            android:title="检查更新" />
         <Preference
             android:icon="@drawable/ic_cat"
             android:key="@string/about_author"
