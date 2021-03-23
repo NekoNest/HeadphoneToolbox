@@ -61,15 +61,17 @@ fun FeatureToggleCard(
 
     Card(
         modifier = modifier
-            .fillMaxWidth()
-            .clickable {
-                onClick()
-            },
+            .fillMaxWidth(),
         elevation = 0.dp,
         border = BorderStroke(1.dp, color = animateColorAsState(targetValue = borderColor).value),
         shape = viewModel.shape.value
     ) {
-        Box {
+        Box(
+            modifier = Modifier
+                .clickable {
+                    onClick()
+                }
+        ) {
             // 将图标包裹起来，让图标的可点击范围不那么小
             Box(
                 modifier = Modifier
