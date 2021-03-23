@@ -38,7 +38,7 @@ tasks.withType(KotlinCompile::class.java) {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.4.30")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.4.31")
     implementation("androidx.core:core-ktx:1.3.2")
     implementation("androidx.appcompat:appcompat:1.2.0")
     implementation("androidx.preference:preference-ktx:1.1.1")
@@ -48,13 +48,13 @@ dependencies {
     implementation("com.gyf.immersionbar:immersionbar-ktx:3.0.0")
 
     // Jetpack Compose
-    implementation("androidx.compose.ui:ui:1.0.0-beta01")
-    implementation("androidx.compose.ui:ui-tooling:1.0.0-beta01")
-    implementation("androidx.compose.foundation:foundation:1.0.0-beta01")
-    implementation("androidx.compose.material:material:1.0.0-beta01")
-    implementation("androidx.compose.material:material-icons-core:1.0.0-beta01")
+    implementation("androidx.compose.ui:ui:1.0.0-beta02")
+    implementation("androidx.compose.ui:ui-tooling:1.0.0-beta02")
+    implementation("androidx.compose.foundation:foundation:1.0.0-beta02")
+    implementation("androidx.compose.material:material:1.0.0-beta02")
+    implementation("androidx.compose.material:material-icons-core:1.0.0-beta02")
     implementation("androidx.compose.material:material-icons-extended:1.0.0-beta01")
-    implementation("androidx.activity:activity-compose:1.3.0-alpha03")
+    implementation("androidx.activity:activity-compose:1.3.0-alpha04")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha02")
     implementation("androidx.compose.runtime:runtime-livedata:1.0.0-beta01")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.0.0-beta01")

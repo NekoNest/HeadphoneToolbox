@@ -170,7 +170,7 @@ fun RadioGroup(
 }
 
 @Composable
-fun RadioGroupInternal(
+private fun RadioGroupInternal(
     options: Array<String>,
     onValueChange: (String) -> Unit,
     selected: String
