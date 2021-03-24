@@ -13,8 +13,11 @@ import androidx.lifecycle.LifecycleService
 import com.chheese.app.HeadphoneToolbox.HeadphoneToolbox
 import com.chheese.app.HeadphoneToolbox.R
 import com.chheese.app.HeadphoneToolbox.ToolboxBroadcastReceiver
+import com.chheese.app.HeadphoneToolbox.activity.MainActivity
 import com.chheese.app.HeadphoneToolbox.activity.ToolboxActivity
+import com.chheese.app.HeadphoneToolbox.activity.ToolboxBaseActivity
 import com.chheese.app.HeadphoneToolbox.data.SharedAppData
+import com.chheese.app.HeadphoneToolbox.util.PreferenceKeys
 import com.chheese.app.HeadphoneToolbox.util.get
 import com.chheese.app.HeadphoneToolbox.util.logger
 import com.chheese.app.HeadphoneToolbox.util.setTo
@@ -80,11 +83,18 @@ class ToolboxService : LifecycleService() {
         val notifyTitle = "耳机工具箱正在运行"
         val notifyMessage = "你可以隐藏这条通知，不会影响运行"
 
+        val isNewUiEnabled = app.sharedPreferences.get(PreferenceKeys.SWITCH_USE_NEW_UI, true)
+        val mainActivityCls: Class<out ToolboxBaseActivity> = if (isNewUiEnabled) {
+            MainActivity::class.java
+        } else {
+            ToolboxActivity::class.java
+        }
+
         val pi = PendingIntent.getActivity(
             this,
             ToolboxActivity.FLAG_REQUEST_CODE,
-            Intent(this, ToolboxActivity::class.java),
-            PendingIntent.FLAG_ONE_SHOT
+            Intent(this, mainActivityCls),
+            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
         )
 
         val action = NotificationCompat.Action(

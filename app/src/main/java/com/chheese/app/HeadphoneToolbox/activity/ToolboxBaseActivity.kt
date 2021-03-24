@@ -9,8 +9,6 @@ import android.net.Uri
 import android.os.*
 import android.provider.Settings
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.CallSuper
 import androidx.annotation.RawRes
 import androidx.annotation.RequiresApi
@@ -22,14 +20,8 @@ import com.chheese.app.HeadphoneToolbox.util.logger
 abstract class ToolboxBaseActivity : BaseActivity() {
     lateinit var handler: Handler
     private var mediaPlayer: MediaPlayer? = null
-    private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        activityResultLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                onActivityResult(it.resultCode, it.data)
-            }
-
         super.onCreate(savedInstanceState)
         val looper = Looper.getMainLooper()
         handler = Handler(looper, this::handleMessage)
@@ -111,10 +103,8 @@ abstract class ToolboxBaseActivity : BaseActivity() {
         if (isIgnored) return
         val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
         intent.data = Uri.fromParts("package", app.packageName, null)
-        activityResultLauncher.launch(intent)
+        startActivityForResult(intent, 0)
     }
-
-    protected abstract fun onActivityResult(resultCode: Int, data: Intent?)
 
     override fun onStop() {
         if (mediaPlayer != null) {

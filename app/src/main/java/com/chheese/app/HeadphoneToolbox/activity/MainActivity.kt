@@ -52,7 +52,8 @@ class MainActivity : ToolboxBaseActivity() {
         SharedAppData.lightScreen setTo false
     }
 
-    override fun onActivityResult(resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         when (resultCode) {
             0 -> {
                 logger.info("用户拒绝了请求")
