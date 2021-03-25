@@ -11,7 +11,7 @@ import androidx.annotation.RequiresApi
 import androidx.annotation.XmlRes
 import androidx.preference.PreferenceFragmentCompat
 import com.chheese.app.HeadphoneToolbox.HeadphoneToolbox
-import com.chheese.app.HeadphoneToolbox.activity.ToolboxActivity
+import com.chheese.app.HeadphoneToolbox.activity.ToolboxBaseActivity
 import com.chheese.app.HeadphoneToolbox.util.isIgnoringBatteryOptimizations
 import com.chheese.app.HeadphoneToolbox.util.logger
 
@@ -76,7 +76,7 @@ abstract class BaseFragment(@XmlRes private val resId: Int) :
         when (resultCode) {
             0 -> {
                 logger.info("用户拒绝了请求")
-                (requireActivity() as ToolboxActivity).onIgnoreBatteryOptimizationActivityReject()
+                (requireActivity() as ToolboxBaseActivity).onIgnoreBatteryOptimizationActivityReject()
             }
             -1 -> {
                 logger.info("用户同意了请求")

@@ -53,6 +53,7 @@ abstract class BaseActivity : AppCompatActivity() {
                 )
             }
         }
+
         SharedAppData.topEndCornerSize.observe(this) {
             viewModel.topEndCornerSize.value = it
             SharedAppData.apply {
@@ -90,30 +91,15 @@ abstract class BaseActivity : AppCompatActivity() {
             viewModel.shapeCornerSize.value = it
             SharedAppData.apply {
                 shape.value = shape(
-                    when (shapeType.value!!) {
-                        "round" -> ShapeType.ROUNDED
-                        "cut" -> ShapeType.CUT
-                        "none" -> ShapeType.NONE
-                        else -> error("没有这种边角类型")
-                    }, shapeCornerSize.value!!
+                    ShapeType.valueTo(shapeType.value!!), shapeCornerSize.value!!
                 )
             }
         }
         SharedAppData.shapeType.observe(this) {
-            viewModel.shapeType.value = when (it) {
-                "round" -> ShapeType.ROUNDED
-                "cut" -> ShapeType.CUT
-                "none" -> ShapeType.NONE
-                else -> error("没有这种边角类型")
-            }
+            viewModel.shapeType.value = ShapeType.valueTo(it)
             SharedAppData.apply {
                 shape.value = shape(
-                    when (shapeType.value!!) {
-                        "round" -> ShapeType.ROUNDED
-                        "cut" -> ShapeType.CUT
-                        "none" -> ShapeType.NONE
-                        else -> error("没有这种边角类型")
-                    }, shapeCornerSize.value!!
+                    ShapeType.valueTo(it), shapeCornerSize.value!!
                 )
             }
         }

@@ -67,15 +67,11 @@ fun UiSettings(
                     }
                 },
                 orientation = Orientation.Horizontal,
-                selected = when (viewModel.shapeType.value) {
-                    ShapeType.NONE -> "无"
-                    ShapeType.ROUNDED -> "圆角"
-                    ShapeType.CUT -> "钻石切边"
-                }
+                selected = viewModel.shapeType.value.zhName
             )
         }
         SliderWithText(
-            title = "左上角半径（单位：DP）",
+            title = "左上角半径",
             modifier = Modifier
                 .padding(8.dp, 0.dp, 8.dp, 8.dp),
             onValueChange = {
@@ -84,7 +80,7 @@ fun UiSettings(
             value = viewModel.topStartCornerSize.value
         )
         SliderWithText(
-            title = "右上角半径（单位：DP）",
+            title = "右上角半径",
             modifier = Modifier
                 .padding(8.dp, 0.dp, 8.dp, 8.dp),
             onValueChange = {
@@ -93,7 +89,7 @@ fun UiSettings(
             value = viewModel.topEndCornerSize.value
         )
         SliderWithText(
-            title = "左下角半径（单位：DP）",
+            title = "左下角半径",
             modifier = Modifier
                 .padding(8.dp, 0.dp, 8.dp, 8.dp),
             value = viewModel.bottomStartCornerSize.value,
@@ -102,7 +98,7 @@ fun UiSettings(
             },
         )
         SliderWithText(
-            title = "右下角半径（单位：DP）",
+            title = "右下角半径",
             modifier = Modifier
                 .padding(8.dp, 0.dp, 8.dp, 8.dp),
             value = viewModel.bottomEndCornerSize.value,
@@ -151,7 +147,11 @@ fun SliderWithText(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
     ) {
-        Text(text = title)
+        Text(
+            text = title,
+            modifier = Modifier
+                .padding(end = 8.dp)
+        )
         Slider(
             value = value.toFloat(),
             onValueChange = {

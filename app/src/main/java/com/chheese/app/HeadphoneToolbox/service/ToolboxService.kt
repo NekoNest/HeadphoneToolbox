@@ -72,7 +72,7 @@ class ToolboxService : LifecycleService() {
             val notifyChannel = NotificationChannel(
                 ID_NOTIFICATION,
                 ID_NOTIFICATION,
-                NotificationManager.IMPORTANCE_NONE
+                NotificationManager.IMPORTANCE_HIGH
             )
             val nm = getSystemService(NotificationManager::class.java)
             nm.createNotificationChannel(notifyChannel)

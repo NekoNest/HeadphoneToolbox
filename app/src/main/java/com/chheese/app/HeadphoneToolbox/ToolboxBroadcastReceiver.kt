@@ -10,7 +10,6 @@ import android.os.Build
 import android.os.PowerManager
 import android.view.WindowManager
 import android.widget.Toast
-
 import com.chheese.app.HeadphoneToolbox.util.*
 
 class ToolboxBroadcastReceiver(private val app: HeadphoneToolbox) : BroadcastReceiver() {
@@ -87,7 +86,7 @@ class ToolboxBroadcastReceiver(private val app: HeadphoneToolbox) : BroadcastRec
     private fun openPlayer(app: HeadphoneToolbox) {
         val selectedPlayer = app.sharedPreferences.get(PreferenceKeys.PREF_SELECT_PLAYER, "")
         if (selectedPlayer == "") {
-            Toast.makeText(app, "没有选择播放器哦", Toast.LENGTH_LONG).show()
+            Toast.makeText(app, "没有选择播放器", Toast.LENGTH_LONG).show()
         } else {
             val launchIntent = app.packageManager.getLaunchIntentForPackage(selectedPlayer)
             try {

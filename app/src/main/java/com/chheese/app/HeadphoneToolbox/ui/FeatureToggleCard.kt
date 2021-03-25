@@ -147,21 +147,32 @@ data class ShapeCornerSize(
 /**
  * 形状类型
  */
-enum class ShapeType {
+enum class ShapeType(val prefName: String, val zhName: String) {
     /**
      * 没有形状，卡片和按钮等的边角将显示为直角
      */
-    NONE,
+    NONE("none", "无"),
 
     /**
      * 圆形边角，需要设置半径
      */
-    ROUNDED,
+    ROUNDED("round", "圆角"),
 
     /**
      * 像钻石切边一样的边角，需要设置半径
      */
-    CUT
+    CUT("cut", "钻石切边");
+
+    companion object {
+        fun valueTo(name: String): ShapeType {
+            return when (name) {
+                "none", "无" -> NONE
+                "round", "圆角" -> ROUNDED
+                "cut", "钻石切边" -> CUT
+                else -> error("没有这种边角类型")
+            }
+        }
+    }
 }
 
 /**

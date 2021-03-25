@@ -1,5 +1,6 @@
 package com.chheese.app.HeadphoneToolbox.fragment
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
@@ -257,6 +258,7 @@ class SettingsFragment(private val inVisibleKeys: Array<String> = arrayOf()) :
     }
 
     override fun addObservers() {
+        if (inVisibleKeys.isNotEmpty()) return
         SharedAppData.openPlayer.observe(this) {
             playerSettings.isVisible = it
         }
@@ -272,10 +274,10 @@ class SettingsFragment(private val inVisibleKeys: Array<String> = arrayOf()) :
             .setMessage(
                 """
                 耳机工具箱是一个耳机相关工具的集合
-                意见反馈可加入QQ群
+                可加入QQ群或在评论区进行意见反馈
                 官方QQ群：594824871""".trimIndent()
             )
-            .setPositiveButton("知道啦") { _, _ -> }
+            .setPositiveButton("了解") { _, _ -> }
             .setNegativeButton("查看Github仓库") { _, _ ->
                 val uri = Uri.parse("https://github.com/NekoNest/HeadphoneToolbox")
                 val intent = Intent(Intent.ACTION_VIEW)
@@ -305,19 +307,20 @@ class SettingsFragment(private val inVisibleKeys: Array<String> = arrayOf()) :
         val pref = preference as SwitchPreference
         if (pref.isChecked && !Settings.canDrawOverlays(requireContext())) {
             AlertDialog.Builder(requireActivity())
-                .setTitle("《关于权限请求的说明》")
+                .setTitle("权限请求")
                 .setMessage("为了能在后台弹出\"是否打开播放器\"的对话框，我们应用需要获取一个称为\"允许调用系统级对话框\"的权限，请求批准")
-                .setPositiveButton("批准请求") { _, _ ->
+                .setPositiveButton("批准") { _, _ ->
                     val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
                     intent.data = Uri.fromParts("package", requireContext().packageName, null)
                     startActivityForResult(intent, REQUEST_ALERT_PERMISSION)
-                }.setNegativeButton("驳回请求") { _, _ ->
+                }.setNegativeButton("驳回") { _, _ ->
                     pref.isChecked = false
                 }.create().show()
         }
         return true
     }
 
+    @SuppressLint("QueryPermissionsNeeded")
     private fun onSelectPlayerClick(pref: Preference): Boolean {
         val pm = requireContext().packageManager
 
