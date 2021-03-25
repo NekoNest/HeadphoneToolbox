@@ -27,4 +27,5 @@
         <item>显示常驻通知(>=安卓8.0推荐)</item>
         <item>忽略省电优化</item>
     </string-array>
+    <string name="title_activity_grant_permission">GrantPermissionActivity</string>
 </resources>

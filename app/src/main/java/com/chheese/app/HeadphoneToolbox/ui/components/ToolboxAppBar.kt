@@ -1,4 +1,4 @@
-package com.chheese.app.HeadphoneToolbox.ui
+package com.chheese.app.HeadphoneToolbox.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

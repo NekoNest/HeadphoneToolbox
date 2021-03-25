@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -13,8 +11,8 @@ android {
         applicationId = "com.chheese.app.HeadphoneToolbox"
         minSdkVersion(23)
         targetSdkVersion(30)
-        versionCode(27)
-        versionName = "4.2.1_Cobalt"
+        versionCode(28)
+        versionName = "4.2.2_Nickel"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -26,15 +24,16 @@ android {
 
     kotlinOptions {
         jvmTarget = "1.8"
+        useIR = true
     }
 
     buildFeatures {
         compose = true
     }
-}
-
-tasks.withType(KotlinCompile::class.java) {
-    kotlinOptions.useIR = true
+    composeOptions {
+        kotlinCompilerExtensionVersion = rootProject.extra["compose_version"] as String
+        kotlinCompilerVersion = "1.4.30"
+    }
 }
 
 dependencies {
@@ -59,5 +58,6 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.3.0-alpha04")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha02")
     implementation("androidx.compose.runtime:runtime-livedata:1.0.0-beta01")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.0-alpha06")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.0.0-beta01")
 }

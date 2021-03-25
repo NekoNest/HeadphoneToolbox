@@ -1,4 +1,4 @@
-package com.chheese.app.HeadphoneToolbox.ui
+package com.chheese.app.HeadphoneToolbox.ui.pages
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
@@ -15,6 +15,8 @@ import androidx.compose.ui.unit.dp
 import com.chheese.app.HeadphoneToolbox.activity.UiSettingsActivity
 import com.chheese.app.HeadphoneToolbox.data.SharedAppData
 import com.chheese.app.HeadphoneToolbox.data.ToolboxViewModel
+import com.chheese.app.HeadphoneToolbox.ui.components.FeatureToggleCard
+import com.chheese.app.HeadphoneToolbox.ui.components.ToolboxAppBar
 import java.util.*
 
 @Composable

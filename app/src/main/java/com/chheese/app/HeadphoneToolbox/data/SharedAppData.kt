@@ -3,9 +3,9 @@ package com.chheese.app.HeadphoneToolbox.data
 import android.app.Activity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.MutableLiveData
-import com.chheese.app.HeadphoneToolbox.ui.ShapeCornerSize
-import com.chheese.app.HeadphoneToolbox.ui.ShapeType
-import com.chheese.app.HeadphoneToolbox.ui.shape
+import com.chheese.app.HeadphoneToolbox.ui.components.ShapeCornerSize
+import com.chheese.app.HeadphoneToolbox.ui.components.ShapeType
+import com.chheese.app.HeadphoneToolbox.ui.components.shape
 
 object SharedAppData {
     val lightScreen = MutableLiveData(false)

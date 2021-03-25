@@ -1,14 +1,12 @@
-package com.chheese.app.HeadphoneToolbox.ui
+package com.chheese.app.HeadphoneToolbox.ui.components
 
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -18,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
@@ -40,96 +37,89 @@ fun FeatureToggleCard(
     showSettings: Boolean = false,
     onSettingsClick: () -> Unit = {}
 ) {
-    val iconAndTextColor = if (isActive) {
-        viewModel.theme.value.primary
-    } else {
-        if (viewModel.theme.value.isLight) {
-            Color.DarkGray
-        } else {
-            Color.LightGray
-        }
-    }
-    val borderColor = if (isActive) {
-        viewModel.theme.value.primary
-    } else {
-        if (viewModel.theme.value.isLight) {
-            Color.LightGray
-        } else {
-            Color.DarkGray
-        }
-    }
-
-    Card(
-        modifier = modifier
-            .fillMaxWidth(),
-        elevation = 0.dp,
-        border = BorderStroke(1.dp, color = animateColorAsState(targetValue = borderColor).value),
-        shape = viewModel.shape.value
+    TwoStateCard(
+        isActive = isActive,
+        viewModel = viewModel,
+        modifier = modifier,
+        onClick = onClick
     ) {
+        // 将图标包裹起来，让图标的可点击范围不那么小
         Box(
             modifier = Modifier
+                .align(Alignment.BottomEnd)
                 .clickable {
-                    onClick()
+                    if (showSettings) {
+                        onSettingsClick()
+                    }
                 }
         ) {
-            // 将图标包裹起来，让图标的可点击范围不那么小
-            Box(
+            Icon(
+                tint = animateColorAsState(
+                    targetValue = iconAndTextColor(
+                        viewModel,
+                        isActive
+                    )
+                ).value,
+                imageVector = Icons.Filled.MoreVert,
+                contentDescription = "",
                 modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .clickable {
-                        if (showSettings) {
-                            onSettingsClick()
-                        }
-                    }
-            ) {
+                    .size(34.dp)
+                    .padding(8.dp)
+                    .alpha(
+                        animateFloatAsState(
+                            targetValue = if (showSettings) {
+                                1f
+                            } else {
+                                0f
+                            }
+                        ).value
+                    )
+            )
+        }
+        Column(modifier = Modifier.padding(8.dp)) {
+            if (iconId != 0) {
                 Icon(
-                    tint = animateColorAsState(targetValue = iconAndTextColor).value,
-                    imageVector = Icons.Filled.MoreVert,
-                    contentDescription = "",
+                    painter = painterResource(id = iconId),
+                    contentDescription = title,
                     modifier = Modifier
-                        .size(34.dp)
-                        .padding(8.dp)
-                        .alpha(
-                            animateFloatAsState(
-                                targetValue = if (showSettings) {
-                                    1f
-                                } else {
-                                    0f
-                                }
-                            ).value
+                        .fillMaxWidth()
+                        .height(72.dp)
+                        .padding(16.dp),
+                    tint = animateColorAsState(
+                        targetValue = iconAndTextColor(
+                            viewModel,
+                            isActive
                         )
+                    ).value
                 )
-            }
-            Column(modifier = Modifier.padding(8.dp)) {
-                if (iconId != 0) {
-                    Icon(
-                        painter = painterResource(id = iconId),
-                        contentDescription = title,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(72.dp)
-                            .padding(16.dp),
-                        tint = animateColorAsState(targetValue = iconAndTextColor).value
-                    )
-                } else if (imageVector != null) {
-                    Icon(
-                        imageVector = imageVector,
-                        contentDescription = title,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(72.dp)
-                            .padding(16.dp),
-                        tint = animateColorAsState(targetValue = iconAndTextColor).value
-                    )
-                }
-                Text(
-                    text = title,
+            } else if (imageVector != null) {
+                Icon(
+                    imageVector = imageVector,
+                    contentDescription = title,
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                    color = animateColorAsState(targetValue = iconAndTextColor).value
+                        .fillMaxWidth()
+                        .height(72.dp)
+                        .padding(16.dp),
+                    tint = animateColorAsState(
+                        targetValue = iconAndTextColor(
+                            viewModel,
+                            isActive
+                        )
+                    ).value
                 )
             }
+            Text(
+                text = title,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                color = animateColorAsState(
+                    targetValue = iconAndTextColor(
+                        viewModel,
+                        isActive
+                    )
+                ).value
+            )
         }
     }
 }

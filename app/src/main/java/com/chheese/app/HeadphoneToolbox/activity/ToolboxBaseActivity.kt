@@ -1,17 +1,14 @@
 package com.chheese.app.HeadphoneToolbox.activity
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.Context
-import android.content.Intent
 import android.media.MediaPlayer
-import android.net.Uri
-import android.os.*
-import android.provider.Settings
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.widget.Toast
 import androidx.annotation.CallSuper
 import androidx.annotation.RawRes
-import androidx.annotation.RequiresApi
 import com.chheese.app.HeadphoneToolbox.HeadphoneToolbox
 import com.chheese.app.HeadphoneToolbox.util.PreferenceKeys
 import com.chheese.app.HeadphoneToolbox.util.get
@@ -93,17 +90,6 @@ abstract class ToolboxBaseActivity : BaseActivity() {
                 }
             }
         }
-    }
-
-    @SuppressLint("BatteryLife")
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    internal fun requestIgnoreBatteryOptimizations() {
-        val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
-        val isIgnored = pm.isIgnoringBatteryOptimizations(app.packageName)
-        if (isIgnored) return
-        val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-        intent.data = Uri.fromParts("package", app.packageName, null)
-        startActivityForResult(intent, 0)
     }
 
     override fun onStop() {

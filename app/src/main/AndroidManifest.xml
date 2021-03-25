@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.chheese.app.HeadphoneToolbox">
@@ -13,6 +14,12 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+        </intent>
+    </queries>
+
     <application
         android:name=".HeadphoneToolbox"
         android:icon="@mipmap/ic_launcher"
@@ -21,20 +28,22 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup">
-
+        <activity
+            android:name=".activity.PermissionManageActivity"
+            android:exported="true"
+            android:label="@string/title_activity_grant_permission"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.ToolboxActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
             tools:ignore="LockedOrientationActivity" />
-
         <activity
             android:name=".activity.LogListActivity"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".activity.ViewLogActivity"
             android:theme="@style/AppTheme" />
-
         <activity
             android:name=".activity.SplashActivity"
             android:screenOrientation="portrait"
@@ -42,6 +51,7 @@
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -50,7 +60,6 @@
         <activity android:name=".activity.UiSettingsActivity" />
 
         <service android:name=".service.ToolboxService" />
-
         <service
             android:name=".service.LightScreenTileService"
             android:icon="@drawable/ic_light_screen_on"
@@ -60,7 +69,6 @@
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
         </service>
-
         <service
             android:name=".service.OpenPlayerTileService"
             android:icon="@drawable/ic_open_player"
@@ -69,9 +77,7 @@
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
-        </service>
-
-        <!--适配全面屏-->
+        </service> <!-- 适配全面屏 -->
         <meta-data
             android:name="android.notch_support"
             android:value="true" />
@@ -79,11 +85,5 @@
             android:name="notch.config"
             android:value="portrait|landscape" />
     </application>
-
-    <queries>
-        <intent>
-            <action android:name="android.intent.action.MAIN" />
-        </intent>
-    </queries>
 
 </manifest>

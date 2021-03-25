@@ -1,13 +1,11 @@
 package com.chheese.app.HeadphoneToolbox.fragment
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
-import android.net.Uri
-import android.os.*
-import android.provider.Settings
-import androidx.annotation.RequiresApi
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import androidx.annotation.XmlRes
 import androidx.preference.PreferenceFragmentCompat
 import com.chheese.app.HeadphoneToolbox.HeadphoneToolbox
@@ -55,22 +53,6 @@ abstract class BaseFragment(@XmlRes private val resId: Int) :
      */
     protected fun isIgnoringBatteryOptimizations() =
         requireActivity().isIgnoringBatteryOptimizations()
-
-    protected fun requestBatteryPermission() {
-        logger.info("正在请求忽略电池优化权限")
-        requestIgnoreBatteryOptimizations()
-    }
-
-    @SuppressLint("BatteryLife")
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    protected fun requestIgnoreBatteryOptimizations() {
-        val pm = requireContext().getSystemService(Context.POWER_SERVICE) as PowerManager
-        val isIgnored = pm.isIgnoringBatteryOptimizations(app.packageName)
-        if (isIgnored) return
-        val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-        intent.data = Uri.fromParts("package", app.packageName, null)
-        startActivityForResult(intent, 1)
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (resultCode) {

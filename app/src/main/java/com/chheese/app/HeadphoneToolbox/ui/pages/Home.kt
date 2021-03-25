@@ -1,4 +1,4 @@
-package com.chheese.app.HeadphoneToolbox.ui
+package com.chheese.app.HeadphoneToolbox.ui.pages
 
 import android.content.Intent
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -17,11 +17,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.chheese.app.HeadphoneToolbox.R
 import com.chheese.app.HeadphoneToolbox.activity.MainActivity
+import com.chheese.app.HeadphoneToolbox.activity.PermissionManageActivity
 import com.chheese.app.HeadphoneToolbox.activity.SettingsActivity
 import com.chheese.app.HeadphoneToolbox.data.SharedAppData
 import com.chheese.app.HeadphoneToolbox.data.ToolboxViewModel
-import com.chheese.app.HeadphoneToolbox.util.PreferenceKeys
-import com.chheese.app.HeadphoneToolbox.util.isIgnoringBatteryOptimizations
+import com.chheese.app.HeadphoneToolbox.ui.components.FeatureToggleCard
+import com.chheese.app.HeadphoneToolbox.ui.components.ToolboxAppBar
+import com.chheese.app.HeadphoneToolbox.util.*
 
 @ExperimentalFoundationApi
 @Composable
@@ -44,13 +46,28 @@ fun Home(
                         .padding(16.dp, 16.dp, 8.dp, 8.dp),
                     viewModel = viewModel,
                     isActive = viewModel.lightScreen.value,
-                    onClick = {
-                        SharedAppData.lightScreen.value = !SharedAppData.lightScreen.value!!
-                        if (SharedAppData.lightScreen.value!! && mainActivity != null) {
-                            if (!mainActivity.isIgnoringBatteryOptimizations()) {
-                                mainActivity.requestIgnoreBatteryOptimizations()
-                            }
+                    onClick = onClick@{
+                        if (SharedAppData.lightScreen.value!!) {
+                            SharedAppData.lightScreen setTo false
+                            return@onClick
                         }
+                        mainActivity ?: return@onClick
+                        if (mainActivity.isIgnoringBatteryOptimizations()) {
+                            SharedAppData.lightScreen setTo true
+                            return@onClick
+                        }
+                        mainActivity.checkPermissions(
+                            permissionAllGranted = {},
+                            onPositiveButtonClick = {
+                                mainActivity.startActivity(
+                                    Intent(
+                                        mainActivity,
+                                        PermissionManageActivity::class.java
+                                    )
+                                )
+                            },
+                            onNegativeButtonClick = {}
+                        )
                     }
                 )
             }
@@ -62,13 +79,26 @@ fun Home(
                         .padding(8.dp, 16.dp, 16.dp, 8.dp),
                     viewModel = viewModel,
                     isActive = viewModel.openPlayer.value,
-                    onClick = {
-                        SharedAppData.openPlayer.value = !SharedAppData.openPlayer.value!!
-                        if (SharedAppData.openPlayer.value!! && mainActivity != null) {
-                            if (!mainActivity.isIgnoringBatteryOptimizations()) {
-                                mainActivity.requestIgnoreBatteryOptimizations()
-                            }
+                    onClick = onClick@{
+                        if (SharedAppData.openPlayer.value!!) {
+                            SharedAppData.openPlayer setTo false
+                            return@onClick
                         }
+                        mainActivity ?: return@onClick
+                        mainActivity.checkPermissions(
+                            permissionAllGranted = {
+                                SharedAppData.openPlayer setTo true
+                            },
+                            onPositiveButtonClick = {
+                                mainActivity.startActivity(
+                                    Intent(
+                                        mainActivity,
+                                        PermissionManageActivity::class.java
+                                    )
+                                )
+                            },
+                            onNegativeButtonClick = {}
+                        )
                     },
                     showSettings = viewModel.openPlayer.value,
                     onSettingsClick = {

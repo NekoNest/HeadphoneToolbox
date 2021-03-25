@@ -25,14 +25,7 @@ class ToolboxBroadcastReceiver(private val app: HeadphoneToolbox) : BroadcastRec
                 requireWakelock(context)
             }
             if (app.sharedPreferences.get(PreferenceKeys.SWITCH_OPEN_PLAYER, false)) {
-                if (app.sharedPreferences.get(
-                        PreferenceKeys.SWITCH_ALERT_ON_OPEN, false
-                    )
-                ) {
-                    showOpenDialog(app)
-                } else {
-                    openPlayer(app)
-                }
+                showOpenDialog(app)
             }
         }
         if (app.sharedPreferences.get(PreferenceKeys.SWITCH_ALLOW_BLUETOOTH, false)) {
@@ -52,14 +45,7 @@ class ToolboxBroadcastReceiver(private val app: HeadphoneToolbox) : BroadcastRec
                 }
                 if (!hasAudio) return
                 if (app.sharedPreferences.get(PreferenceKeys.SWITCH_OPEN_PLAYER, false)) {
-                    if (app.sharedPreferences.get(
-                            PreferenceKeys.SWITCH_ALERT_ON_OPEN, false
-                        )
-                    ) {
-                        showOpenDialog(app)
-                    } else {
-                        openPlayer(app)
-                    }
+                    showOpenDialog(app)
                 }
             }
         }
@@ -69,11 +55,11 @@ class ToolboxBroadcastReceiver(private val app: HeadphoneToolbox) : BroadcastRec
         val dialog = AlertDialog.Builder(
             app,
             R.style.AppTheme_Dialog
-        ).setTitle("请问一下")
+        ).setTitle("耳机已连接")
             .setMessage("要打开播放器吗？")
-            .setPositiveButton("好的好的") { _, _ ->
+            .setPositiveButton("好的") { _, _ ->
                 openPlayer(app)
-            }.setNegativeButton("才不要呢") { _, _ -> }
+            }.setNegativeButton("不需要") { _, _ -> }
             .create()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             dialog.window!!.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)

@@ -1,7 +1,15 @@
 package com.chheese.app.HeadphoneToolbox.activity
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
+import android.provider.Settings
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
@@ -10,10 +18,8 @@ import com.chheese.app.HeadphoneToolbox.HeadphoneToolbox
 import com.chheese.app.HeadphoneToolbox.R
 import com.chheese.app.HeadphoneToolbox.data.SharedAppData
 import com.chheese.app.HeadphoneToolbox.data.ToolboxViewModel
-import com.chheese.app.HeadphoneToolbox.ui.Color
-import com.chheese.app.HeadphoneToolbox.ui.ShapeCornerSize
-import com.chheese.app.HeadphoneToolbox.ui.ShapeType
-import com.chheese.app.HeadphoneToolbox.ui.shape
+import com.chheese.app.HeadphoneToolbox.ui.components.*
+import com.chheese.app.HeadphoneToolbox.ui.pages.Color
 import com.chheese.app.HeadphoneToolbox.util.*
 import com.gyf.immersionbar.ktx.immersionBar
 
@@ -122,6 +128,20 @@ abstract class BaseActivity : AppCompatActivity() {
             }
             viewModel.colorTextFieldValue.value = "#$it"
         }
+    }
+
+    @SuppressLint("BatteryLife")
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    internal fun requestIgnoreBatteryOptimizations() {
+        val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+        val isIgnored = pm.isIgnoringBatteryOptimizations(app.packageName)
+        if (isIgnored) {
+            logger.warn("已经获得授权时不应该调用此方法")
+            return
+        }
+        val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+        intent.data = Uri.fromParts("package", app.packageName, null)
+        startActivityForResult(intent, 0)
     }
 
     companion object {

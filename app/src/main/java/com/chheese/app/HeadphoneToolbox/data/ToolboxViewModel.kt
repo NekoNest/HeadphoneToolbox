@@ -5,9 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
-import com.chheese.app.HeadphoneToolbox.ui.ShapeCornerSize
-import com.chheese.app.HeadphoneToolbox.ui.ShapeType
-import com.chheese.app.HeadphoneToolbox.ui.shape
+import com.chheese.app.HeadphoneToolbox.ui.components.ShapeCornerSize
+import com.chheese.app.HeadphoneToolbox.ui.components.ShapeType
+import com.chheese.app.HeadphoneToolbox.ui.components.shape
 import com.chheese.app.HeadphoneToolbox.ui.theme.ToolboxTheme
 
 class ToolboxViewModel : ViewModel() {
@@ -38,4 +38,7 @@ class ToolboxViewModel : ViewModel() {
         )
     )
     val shape: MutableState<Shape> = mutableStateOf(shape(shapeType.value, shapeCornerSize.value))
+
+    val isIgnoreBatteryOptimization = mutableStateOf(false)
+    val isAllowSystemDialog = mutableStateOf(false)
 }

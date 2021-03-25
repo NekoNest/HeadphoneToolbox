@@ -8,7 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import com.chheese.app.HeadphoneToolbox.R
 import com.chheese.app.HeadphoneToolbox.data.SharedAppData
-import com.chheese.app.HeadphoneToolbox.ui.Home
+import com.chheese.app.HeadphoneToolbox.ui.pages.Home
 import com.chheese.app.HeadphoneToolbox.ui.theme.ToolboxTheme
 import com.chheese.app.HeadphoneToolbox.util.logger
 import com.chheese.app.HeadphoneToolbox.util.randAudio

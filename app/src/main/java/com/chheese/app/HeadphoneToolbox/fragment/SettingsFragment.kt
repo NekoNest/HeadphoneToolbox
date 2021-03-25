@@ -13,13 +13,11 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.SwitchPreference
 import com.chheese.app.HeadphoneToolbox.R
 import com.chheese.app.HeadphoneToolbox.activity.LogListActivity
+import com.chheese.app.HeadphoneToolbox.activity.PermissionManageActivity
 import com.chheese.app.HeadphoneToolbox.activity.SplashActivity
 import com.chheese.app.HeadphoneToolbox.activity.UiSettingsActivity
 import com.chheese.app.HeadphoneToolbox.data.SharedAppData
-import com.chheese.app.HeadphoneToolbox.util.PreferenceKeys
-import com.chheese.app.HeadphoneToolbox.util.edit
-import com.chheese.app.HeadphoneToolbox.util.get
-import com.chheese.app.HeadphoneToolbox.util.logger
+import com.chheese.app.HeadphoneToolbox.util.*
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
@@ -31,7 +29,6 @@ import java.net.URI
 class SettingsFragment(private val inVisibleKeys: Array<String> = arrayOf()) :
     BaseFragment(R.xml.preference_settings) {
     private lateinit var playerSettings: PreferenceCategory
-    private lateinit var alertOnOpen: SwitchPreference
     private lateinit var selectPlayer: Preference
     private lateinit var viewLog: Preference
     private lateinit var openDetails: Preference
@@ -45,6 +42,7 @@ class SettingsFragment(private val inVisibleKeys: Array<String> = arrayOf()) :
     private lateinit var aboutAuthor: Preference
     private lateinit var checkForUpdates: Preference
     private lateinit var restartUi: Preference
+    private lateinit var permissionManage: Preference
 
     init {
         messageCallback = {
@@ -63,7 +61,6 @@ class SettingsFragment(private val inVisibleKeys: Array<String> = arrayOf()) :
 
     override fun initPreferences() {
         playerSettings = findPreference(PreferenceKeys.CATEGORY_PLAYER_SETTINGS)
-        alertOnOpen = findPreference(PreferenceKeys.SWITCH_ALERT_ON_OPEN)
         selectPlayer = findPreference(PreferenceKeys.PREF_SELECT_PLAYER)
         viewLog = findPreference(PreferenceKeys.PREF_VIEW_LOG)
         openDetails = findPreference(PreferenceKeys.PREF_OPEN_DETAILS)
@@ -77,13 +74,13 @@ class SettingsFragment(private val inVisibleKeys: Array<String> = arrayOf()) :
         aboutAuthor = findPreference(PreferenceKeys.PREF_ABOUT_AUTHOR)
         checkForUpdates = findPreference(PreferenceKeys.PREF_CHECK_FOR_UPDATES)
         restartUi = findPreference(PreferenceKeys.PREF_RESTART_UI)
+        permissionManage = findPreference(PreferenceKeys.PREF_PERMISSION_MANAGE)
 
         playerSettings.isVisible = app.sharedPreferences
             .getBoolean(PreferenceKeys.SWITCH_OPEN_PLAYER, false)
         experimentalFeatures.isVisible = app.sharedPreferences
             .getBoolean(PreferenceKeys.SWITCH_USE_EXPERIMENTAL_FEATURE, false)
 
-        alertOnOpen.setOnPreferenceClickListener(this::onAlertOnOpenPrefClick)
         selectPlayer.setOnPreferenceClickListener(this::onSelectPlayerClick)
         val selectedPackage = app.sharedPreferences.get(PreferenceKeys.PREF_SELECT_PLAYER, "")
         val matchedApp = app.packageManager.getInstalledApplications(0).filter {
@@ -170,6 +167,11 @@ class SettingsFragment(private val inVisibleKeys: Array<String> = arrayOf()) :
 
         restartUi.setOnPreferenceClickListener {
             restartUi()
+            true
+        }
+
+        permissionManage.setOnPreferenceClickListener {
+            startActivity(Intent(requireContext(), PermissionManageActivity::class.java))
             true
         }
 
@@ -303,23 +305,6 @@ class SettingsFragment(private val inVisibleKeys: Array<String> = arrayOf()) :
         return true
     }
 
-    private fun onAlertOnOpenPrefClick(preference: Preference): Boolean {
-        val pref = preference as SwitchPreference
-        if (pref.isChecked && !Settings.canDrawOverlays(requireContext())) {
-            AlertDialog.Builder(requireActivity())
-                .setTitle("权限请求")
-                .setMessage("为了能在后台弹出\"是否打开播放器\"的对话框，我们应用需要获取一个称为\"允许调用系统级对话框\"的权限，请求批准")
-                .setPositiveButton("批准") { _, _ ->
-                    val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
-                    intent.data = Uri.fromParts("package", requireContext().packageName, null)
-                    startActivityForResult(intent, REQUEST_ALERT_PERMISSION)
-                }.setNegativeButton("驳回") { _, _ ->
-                    pref.isChecked = false
-                }.create().show()
-        }
-        return true
-    }
-
     @SuppressLint("QueryPermissionsNeeded")
     private fun onSelectPlayerClick(pref: Preference): Boolean {
         val pm = requireContext().packageManager
@@ -364,8 +349,4 @@ class SettingsFragment(private val inVisibleKeys: Array<String> = arrayOf()) :
     }
 
     override fun handleMessage(message: Message) = true
-
-    companion object {
-        const val REQUEST_ALERT_PERMISSION = 0xf05
-    }
 }

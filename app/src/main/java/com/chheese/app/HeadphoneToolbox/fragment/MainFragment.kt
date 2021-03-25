@@ -2,12 +2,14 @@ package com.chheese.app.HeadphoneToolbox.fragment
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Message
 import android.view.LayoutInflater
 import androidx.core.content.res.ResourcesCompat
 import androidx.preference.Preference
 import androidx.preference.SwitchPreference
 import com.chheese.app.HeadphoneToolbox.R
+import com.chheese.app.HeadphoneToolbox.activity.PermissionManageActivity
 import com.chheese.app.HeadphoneToolbox.activity.ToolboxActivity
 import com.chheese.app.HeadphoneToolbox.data.SharedAppData
 import com.chheese.app.HeadphoneToolbox.util.*
@@ -65,7 +67,19 @@ class MainFragment : BaseFragment(R.xml.preference_main) {
             // 检查权限
             if (!isIgnoringBatteryOptimizations()) {
                 logger.info("需要忽略电池优化权限")
-                requestBatteryPermission()
+                isChecked = false
+                requireContext().checkPermissions(
+                    permissionAllGranted = {},
+                    onPositiveButtonClick = {
+                        startActivity(
+                            Intent(
+                                requireContext(),
+                                PermissionManageActivity::class.java
+                            )
+                        )
+                    },
+                    onNegativeButtonClick = {}
+                )
             }
         }
         return true
@@ -81,9 +95,21 @@ class MainFragment : BaseFragment(R.xml.preference_main) {
             }
             logger.info("用户在应用内打开了功能【打开播放器】的开关")
             // 检查权限
-            if (!isIgnoringBatteryOptimizations()) {
+            if (!requireContext().isAllPermissionsGranted()) {
                 logger.info("需要忽略电池优化权限")
-                requestBatteryPermission()
+                isChecked = false
+                requireContext().checkPermissions(
+                    permissionAllGranted = {},
+                    onPositiveButtonClick = {
+                        startActivity(
+                            Intent(
+                                requireContext(),
+                                PermissionManageActivity::class.java
+                            )
+                        )
+                    },
+                    onNegativeButtonClick = {}
+                )
             }
         }
         return true
